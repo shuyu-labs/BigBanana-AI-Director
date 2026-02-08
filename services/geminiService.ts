@@ -1,5 +1,6 @@
 import { ScriptData, Shot, Character, Scene, AspectRatio, VideoDuration } from "../types";
 import { addRenderLogWithTokens } from './renderLogService';
+import { verifyApiKeyAgainstBase } from './apiKeyVerifier';
 import { 
   getGlobalApiKey as getRegistryApiKey,
   setGlobalApiKey as setRegistryApiKey,
@@ -78,7 +79,9 @@ const checkApiKey = (type: 'chat' | 'image' | 'video' = 'chat', modelId?: string
 };
 
 // 默认 API base URL（向后兼容）
-const DEFAULT_API_BASE = 'https://api.antsk.cn';
+const DEFAULT_API_BASE = (process.env.ANTSK_API_BASE || 'https://api.antsk.cn')
+  .replace(/\/+$/, '')
+  .replace(/\/(v1|v1beta)$/i, '');
 
 /**
  * 获取 API 基础 URL
@@ -136,9 +139,6 @@ const getSoraVideoSize = (aspectRatio: AspectRatio): string => {
   return sizeMap[aspectRatio];
 };
 
-// 保留 ANTSK_API_BASE 用于向后兼容，但优先使用 getApiBase()
-const ANTSK_API_BASE = DEFAULT_API_BASE;
-
 /**
  * Verify API Key connectivity
  * Uses a minimal API call to test if the key is valid
@@ -146,43 +146,7 @@ const ANTSK_API_BASE = DEFAULT_API_BASE;
  * @returns Promise<boolean> - true if key is valid, false otherwise
  */
 export const verifyApiKey = async (key: string): Promise<{ success: boolean; message: string }> => {
-  try {
-    const apiBase = getApiBase('chat');
-    const response = await fetch(`${apiBase}/v1/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${key}`
-      },
-      body: JSON.stringify({
-        model: 'gpt-41',
-        messages: [{ role: 'user', content: '仅返回1' }],
-        temperature: 0.1,
-        max_tokens: 5
-      })
-    });
-
-    if (!response.ok) {
-      let errorMessage = `验证失败: ${response.status}`;
-      try {
-        const errorData = await response.json();
-        errorMessage = errorData.error?.message || errorMessage;
-      } catch (e) {
-        // ignore
-      }
-      return { success: false, message: errorMessage };
-    }
-
-    const data = await response.json();
-    // Check if we got a valid response
-    if (data.choices?.[0]?.message?.content !== undefined) {
-      return { success: true, message: 'API Key 验证成功' };
-    } else {
-      return { success: false, message: '返回格式异常' };
-    }
-  } catch (error: any) {
-    return { success: false, message: error.message || '网络错误' };
-  }
+  return verifyApiKeyAgainstBase(key, getApiBase('chat'));
 };
 
 /**

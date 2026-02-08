@@ -331,11 +331,15 @@ export const BUILTIN_VIDEO_MODELS: VideoModelDefinition[] = [
 /**
  * 内置提供商列表
  */
+const DEFAULT_ANTSK_API_BASE = (process.env.ANTSK_API_BASE || 'https://api.antsk.cn')
+  .replace(/\/+$/, '')
+  .replace(/\/(v1|v1beta)$/i, '');
+
 export const BUILTIN_PROVIDERS: ModelProvider[] = [
   {
     id: 'antsk',
-    name: 'BigBanana API (api.antsk.cn)',
-    baseUrl: 'https://api.antsk.cn',
+    name: `BigBanana API (${DEFAULT_ANTSK_API_BASE.replace(/^https?:\/\//, '')})`,
+    baseUrl: DEFAULT_ANTSK_API_BASE,
     isBuiltIn: true,
     isDefault: true,
   },
