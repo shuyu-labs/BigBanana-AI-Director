@@ -35,23 +35,23 @@ const WardrobeModal: React.FC<WardrobeModalProps> = ({
   };
 
   return (
-    <div className="absolute inset-0 z-40 bg-black/90 backdrop-blur-sm flex items-center justify-center p-8 animate-in fade-in duration-200">
-      <div className="bg-[#141414] border border-zinc-800 w-full max-w-4xl max-h-[90vh] rounded-2xl flex flex-col shadow-2xl overflow-hidden">
+    <div className="absolute inset-0 z-40 bg-[var(--bg-base)]/90 backdrop-blur-sm flex items-center justify-center p-8 animate-in fade-in duration-200">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-primary)] w-full max-w-4xl max-h-[90vh] rounded-2xl flex flex-col shadow-2xl overflow-hidden">
         {/* Modal Header */}
-        <div className="h-16 px-8 border-b border-zinc-800 flex items-center justify-between shrink-0 bg-[#1A1A1A]">
+        <div className="h-16 px-8 border-b border-[var(--border-primary)] flex items-center justify-between shrink-0 bg-[var(--bg-elevated)]">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-zinc-800 overflow-hidden border border-zinc-700">
+            <div className="w-10 h-10 rounded-full bg-[var(--bg-hover)] overflow-hidden border border-[var(--border-secondary)]">
               {character.referenceImage && (
                 <img src={character.referenceImage} className="w-full h-full object-cover" alt={character.name} />
               )}
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">{character.name}</h3>
-              <p className="text-xs text-zinc-500 font-mono uppercase tracking-wider">Wardrobe & Variations</p>
+              <h3 className="text-lg font-bold text-[var(--text-primary)]">{character.name}</h3>
+              <p className="text-xs text-[var(--text-tertiary)] font-mono uppercase tracking-wider">Wardrobe & Variations</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-zinc-800 rounded-full transition-colors">
-            <X className="w-5 h-5 text-zinc-500" />
+          <button onClick={onClose} className="p-2 hover:bg-[var(--bg-hover)] rounded-full transition-colors">
+            <X className="w-5 h-5 text-[var(--text-tertiary)]" />
           </button>
         </div>
         
@@ -60,31 +60,31 @@ const WardrobeModal: React.FC<WardrobeModalProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Base Look */}
             <div>
-              <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+              <h4 className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-4 flex items-center gap-2">
                 <User className="w-4 h-4" /> Base Appearance
               </h4>
-              <div className="bg-[#0A0A0A] p-4 rounded-xl border border-zinc-800">
+              <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--border-primary)]">
                 <div 
-                  className="aspect-video bg-zinc-900 rounded-lg overflow-hidden mb-4 relative cursor-pointer"
+                  className="aspect-video bg-[var(--bg-elevated)] rounded-lg overflow-hidden mb-4 relative cursor-pointer"
                   onClick={() => character.referenceImage && onImageClick(character.referenceImage)}
                 >
                   {character.referenceImage ? (
                     <img src={character.referenceImage} className="w-full h-full object-cover" alt="Base" />
                   ) : (
-                    <div className="flex items-center justify-center h-full text-zinc-700">No Image</div>
+                    <div className="flex items-center justify-center h-full text-[var(--text-muted)]">No Image</div>
                   )}
-                  <div className="absolute top-2 left-2 px-2 py-1 bg-black/60 backdrop-blur rounded text-[10px] text-white font-bold uppercase border border-white/10">
+                  <div className="absolute top-2 left-2 px-2 py-1 bg-[var(--bg-base)]/60 backdrop-blur rounded text-[10px] text-[var(--text-primary)] font-bold uppercase border border-[var(--overlay-border)]">
                     Default
                   </div>
                 </div>
-                <p className="text-xs text-zinc-500 leading-relaxed font-mono">{character.visualPrompt}</p>
+                <p className="text-xs text-[var(--text-tertiary)] leading-relaxed font-mono">{character.visualPrompt}</p>
               </div>
             </div>
 
             {/* Variations */}
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
+                <h4 className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest flex items-center gap-2">
                   <Shirt className="w-4 h-4" /> Variations / Outfits
                 </h4>
               </div>
@@ -94,9 +94,9 @@ const WardrobeModal: React.FC<WardrobeModalProps> = ({
                 {(character.variations || []).map((variation) => (
                   <div 
                     key={variation.id} 
-                    className="flex gap-4 p-4 bg-[#0A0A0A] border border-zinc-800 rounded-xl group hover:border-zinc-700 transition-colors"
+                    className="flex gap-4 p-4 bg-[var(--bg-primary)] border border-[var(--border-primary)] rounded-xl group hover:border-[var(--border-secondary)] transition-colors"
                   >
-                    <div className="w-20 h-24 bg-zinc-900 rounded-lg flex-shrink-0 overflow-hidden relative border border-zinc-800">
+                    <div className="w-20 h-24 bg-[var(--bg-elevated)] rounded-lg flex-shrink-0 overflow-hidden relative border border-[var(--border-primary)]">
                       {variation.referenceImage ? (
                         <img 
                           src={variation.referenceImage} 
@@ -107,48 +107,48 @@ const WardrobeModal: React.FC<WardrobeModalProps> = ({
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           {variation.status === 'failed' ? (
-                            <AlertCircle className="w-6 h-6 text-red-500" />
+                            <AlertCircle className="w-6 h-6 text-[var(--error)]" />
                           ) : (
-                            <Shirt className="w-6 h-6 text-zinc-800" />
+                            <Shirt className="w-6 h-6 text-[var(--text-muted)]" />
                           )}
                         </div>
                       )}
                       {variation.status === 'generating' && (
-                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                          <Loader2 className="w-4 h-4 text-white animate-spin" />
+                        <div className="absolute inset-0 bg-[var(--bg-base)]/60 flex items-center justify-center">
+                          <Loader2 className="w-4 h-4 text-[var(--text-primary)] animate-spin" />
                         </div>
                       )}
                       {variation.status === 'failed' && !variation.referenceImage && (
-                        <div className="absolute bottom-0 left-0 right-0 bg-red-900/80 text-white text-[8px] text-center py-0.5">
+                        <div className="absolute bottom-0 left-0 right-0 bg-[var(--error-hover-bg-strong)] text-[var(--text-primary)] text-[8px] text-center py-0.5">
                           失败
                         </div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start mb-2">
-                        <h5 className="font-bold text-zinc-200 text-sm">{variation.name}</h5>
+                        <h5 className="font-bold text-[var(--text-secondary)] text-sm">{variation.name}</h5>
                         <button 
                           onClick={() => onDeleteVariation(character.id, variation.id)} 
-                          className="text-zinc-600 hover:text-red-500 transition-colors"
+                          className="text-[var(--text-muted)] hover:text-[var(--error)] transition-colors"
                         >
                           <X className="w-3 h-3" />
                         </button>
                       </div>
-                      <p className="text-[10px] text-zinc-500 line-clamp-2 mb-3 font-mono">{variation.visualPrompt}</p>
+                      <p className="text-[10px] text-[var(--text-tertiary)] line-clamp-2 mb-3 font-mono">{variation.visualPrompt}</p>
                       <div className="flex gap-3">
                         <button 
                           onClick={() => onGenerateVariation(character.id, variation.id)}
                           disabled={variation.status === 'generating'}
                           className={`text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 transition-colors disabled:opacity-50 ${
                             variation.status === 'failed' 
-                              ? 'text-red-400 hover:text-red-300' 
-                              : 'text-indigo-400 hover:text-white'
+                              ? 'text-[var(--error-text)] hover:text-[var(--error-text)]' 
+                              : 'text-[var(--accent-text)] hover:text-[var(--text-primary)]'
                           }`}
                         >
                           <RefreshCw className={`w-3 h-3 ${variation.status === 'generating' ? 'animate-spin' : ''}`} />
                           {variation.status === 'failed' ? '重试' : variation.referenceImage ? 'Regenerate' : 'Generate Look'}
                         </button>
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 hover:text-white flex items-center gap-1 transition-colors cursor-pointer">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--success-text)] hover:text-[var(--text-primary)] flex items-center gap-1 transition-colors cursor-pointer">
                           <Upload className="w-3 h-3" />
                           Upload
                           <input
@@ -170,25 +170,25 @@ const WardrobeModal: React.FC<WardrobeModalProps> = ({
                 ))}
 
                 {/* Add New */}
-                <div className="p-4 border border-dashed border-zinc-800 rounded-xl bg-[#0A0A0A]/50">
+                <div className="p-4 border border-dashed border-[var(--border-primary)] rounded-xl bg-[var(--bg-primary)]/50">
                   <div className="space-y-3">
                     <input 
                       type="text" 
                       placeholder="Variation Name (e.g. Tactical Gear)" 
                       value={newVarName}
                       onChange={(e) => setNewVarName(e.target.value)}
-                      className="w-full bg-[#141414] border border-zinc-800 rounded px-3 py-2 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-600"
+                      className="w-full bg-[var(--bg-surface)] border border-[var(--border-primary)] rounded px-3 py-2 text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--border-secondary)]"
                     />
                     <textarea 
                       placeholder="Visual description of outfit/state..."
                       value={newVarPrompt}
                       onChange={(e) => setNewVarPrompt(e.target.value)}
-                      className="w-full bg-[#141414] border border-zinc-800 rounded px-3 py-2 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-600 resize-none h-16"
+                      className="w-full bg-[var(--bg-surface)] border border-[var(--border-primary)] rounded px-3 py-2 text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--border-secondary)] resize-none h-16"
                     />
                     <button 
                       onClick={handleAddVariation}
                       disabled={!newVarName || !newVarPrompt}
-                      className="w-full py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-50 transition-colors"
+                      className="w-full py-2 bg-[var(--bg-hover)] hover:bg-[var(--border-secondary)] text-[var(--text-secondary)] rounded text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-50 transition-colors"
                     >
                       <Plus className="w-3 h-3" /> Add Variation
                     </button>

@@ -77,10 +77,10 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const getIcon = () => {
     switch (alertState.type) {
-      case 'success': return <CheckCircle className="w-6 h-6 text-green-500" />;
-      case 'error': return <AlertCircle className="w-6 h-6 text-red-500" />;
-      case 'warning': return <AlertCircle className="w-6 h-6 text-yellow-500" />;
-      default: return <Info className="w-6 h-6 text-blue-500" />;
+      case 'success': return <CheckCircle className="w-6 h-6 text-[var(--success)]" />;
+      case 'error': return <AlertCircle className="w-6 h-6 text-[var(--error)]" />;
+      case 'warning': return <AlertCircle className="w-6 h-6 text-[var(--warning)]" />;
+      default: return <Info className="w-6 h-6 text-[var(--info)]" />;
     }
   };
 
@@ -99,27 +99,27 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       {children}
       {alertState.isOpen && (
         <div 
-          className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-[9999] bg-[var(--bg-base)]/80 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={alertState.showCancel ? handleCancel : closeAlert}
         >
           <div 
-            className="bg-[#1A1A1A] border border-zinc-700 rounded-xl p-6 max-w-sm w-full space-y-4 shadow-2xl animate-in fade-in zoom-in duration-200"
+            className="bg-[var(--bg-elevated)] border border-[var(--border-secondary)] rounded-xl p-6 max-w-sm w-full space-y-4 shadow-2xl animate-in fade-in zoom-in duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 {getIcon()}
-                <h3 className="text-lg font-semibold text-white">{getTitle()}</h3>
+                <h3 className="text-lg font-semibold text-[var(--text-primary)]">{getTitle()}</h3>
               </div>
               <button 
                 onClick={alertState.showCancel ? handleCancel : closeAlert}
-                className="text-zinc-400 hover:text-white transition-colors"
+                className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             
-            <div className="text-zinc-300 text-sm leading-relaxed">
+            <div className="text-[var(--text-secondary)] text-sm leading-relaxed">
               {alertState.message}
             </div>
 
@@ -127,14 +127,14 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               {alertState.showCancel && (
                 <button
                   onClick={handleCancel}
-                  className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white rounded-lg text-sm font-medium transition-colors"
+                  className="px-4 py-2 bg-[var(--bg-hover)] hover:bg-[var(--border-secondary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-lg text-sm font-medium transition-colors"
                 >
                   {alertState.cancelText}
                 </button>
               )}
               <button
                 onClick={closeAlert}
-                className="px-4 py-2 bg-white hover:bg-zinc-200 text-black rounded-lg text-sm font-medium transition-colors"
+                className="px-4 py-2 bg-[var(--btn-primary-bg)] hover:bg-[var(--btn-primary-hover)] text-[var(--btn-primary-text)] rounded-lg text-sm font-medium transition-colors"
               >
                 {alertState.confirmText}
               </button>

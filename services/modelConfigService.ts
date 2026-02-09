@@ -76,10 +76,12 @@ export const loadModelConfig = (): ModelManagerState => {
       }
       // 迁移旧的 Veo 模型名为统一的 veo
       const videoModelName = parsed.currentConfig?.videoModel?.modelName || '';
-      if (videoModelName === 'veo-3.1' || videoModelName.startsWith('veo_3_1')) {
+      if (videoModelName === 'veo-3.1' || videoModelName === 'veo-r2v' || videoModelName.startsWith('veo_3_1') || videoModelName.startsWith('veo_3_0_r2v')) {
         parsed.currentConfig.videoModel.modelName = 'veo';
         parsed.currentConfig.videoModel.type = 'veo';
         parsed.currentConfig.videoModel.endpoint = '/v1/chat/completions';
+        // 迁移后立即回写，避免重复执行
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed)); } catch (e) { /* ignore */ }
       }
       runtimeState = parsed;
       return parsed;

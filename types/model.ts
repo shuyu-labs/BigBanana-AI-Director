@@ -212,7 +212,7 @@ export const DEFAULT_IMAGE_PARAMS: ImageModelParams = {
 };
 
 /**
- * 默认视频模型参数 (Veo)
+ * 默认视频模型参数 (Veo 首尾帧模式)
  */
 export const DEFAULT_VIDEO_PARAMS_VEO: VideoModelParams = {
   mode: 'sync',
@@ -289,11 +289,11 @@ export const BUILTIN_CHAT_MODELS: ChatModelDefinition[] = [
 export const BUILTIN_IMAGE_MODELS: ImageModelDefinition[] = [
   {
     id: 'gemini-3-pro-image-preview',
-    name: 'Gemini 3 Pro Image',
+    name: 'Gemini 3 Pro Image(Nano Banana Pro)',
     type: 'image',
     providerId: 'antsk',
     endpoint: '/v1beta/models/gemini-3-pro-image-preview:generateContent',
-    description: 'Google Gemini 图片生成模型',
+    description: 'Google Nano Banana Pro 图片生成模型',
     isBuiltIn: true,
     isEnabled: true,
     params: { ...DEFAULT_IMAGE_PARAMS },
@@ -306,11 +306,11 @@ export const BUILTIN_IMAGE_MODELS: ImageModelDefinition[] = [
 export const BUILTIN_VIDEO_MODELS: VideoModelDefinition[] = [
   {
     id: 'veo',
-    name: 'Veo 3.1 (Auto)',
+    name: 'Veo 3.1 首尾帧',
     type: 'video',
     providerId: 'antsk',
     endpoint: '/v1/chat/completions',
-    description: 'Google Veo 视频生成（自动按横竖屏与是否带图选择模型），同步模式',
+    description: 'Veo 3.1 首尾帧模式（自动按横竖屏选择模型），需要起始帧和结束帧',
     isBuiltIn: true,
     isEnabled: true,
     params: { ...DEFAULT_VIDEO_PARAMS_VEO },

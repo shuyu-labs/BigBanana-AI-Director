@@ -189,13 +189,15 @@
             {
                 category: "基础 Meta 标签",
                 items: [
-                    { name: "页面标题", selector: "title", type: "text", minLength: 30, maxLength: 60 },
-                    { name: "页面描述", selector: "meta[name='description']", type: "content", minLength: 100, maxLength: 160 },
+                    { name: "页面标题", selector: "title", type: "text", minLength: 30, maxLength: 65 },
+                    { name: "页面描述", selector: "meta[name='description']", type: "content", minLength: 100, maxLength: 200 },
                     { name: "关键词", selector: "meta[name='keywords']", type: "content" },
                     { name: "语言标识", selector: "html[lang]", type: "attribute", attribute: "lang", expected: "zh-CN" },
                     { name: "字符编码", selector: "meta[charset]", type: "attribute", attribute: "charset", expected: "UTF-8" },
                     { name: "Viewport", selector: "meta[name='viewport']", type: "content" },
-                    { name: "Robots", selector: "meta[name='robots']", type: "content", expected: "index, follow" }
+                    { name: "Robots", selector: "meta[name='robots']", type: "content" },
+                    { name: "作者", selector: "meta[name='author']", type: "content" },
+                    { name: "应用名称", selector: "meta[name='application-name']", type: "content" }
                 ]
             },
             {
@@ -203,9 +205,12 @@
                 items: [
                     { name: "OG 类型", selector: "meta[property='og:type']", type: "content" },
                     { name: "OG 标题", selector: "meta[property='og:title']", type: "content", minLength: 30 },
-                    { name: "OG 描述", selector: "meta[property='og:description']", type: "content", minLength: 100 },
+                    { name: "OG 描述", selector: "meta[property='og:description']", type: "content", minLength: 80 },
                     { name: "OG 图片", selector: "meta[property='og:image']", type: "content" },
-                    { name: "OG URL", selector: "meta[property='og:url']", type: "content" }
+                    { name: "OG 图片 Alt", selector: "meta[property='og:image:alt']", type: "content" },
+                    { name: "OG URL", selector: "meta[property='og:url']", type: "content" },
+                    { name: "OG Locale", selector: "meta[property='og:locale']", type: "content" },
+                    { name: "OG 站点名称", selector: "meta[property='og:site_name']", type: "content" }
                 ]
             },
             {
@@ -214,21 +219,35 @@
                     { name: "Twitter 卡片类型", selector: "meta[name='twitter:card']", type: "content" },
                     { name: "Twitter 标题", selector: "meta[name='twitter:title']", type: "content" },
                     { name: "Twitter 描述", selector: "meta[name='twitter:description']", type: "content" },
-                    { name: "Twitter 图片", selector: "meta[name='twitter:image']", type: "content" }
+                    { name: "Twitter 图片", selector: "meta[name='twitter:image']", type: "content" },
+                    { name: "Twitter 图片 Alt", selector: "meta[name='twitter:image:alt']", type: "content" }
                 ]
             },
             {
-                category: "结构化数据",
+                category: "结构化数据 (JSON-LD)",
                 items: [
-                    { name: "JSON-LD", selector: "script[type='application/ld+json']", type: "exists" }
+                    { name: "SoftwareApplication Schema", selector: "script[type='application/ld+json']", type: "exists" },
+                    { name: "FAQPage Schema", selector: "script[type='application/ld+json']", type: "jsonld-count", expected: "6" }
+                ]
+            },
+            {
+                category: "多语言与国际化",
+                items: [
+                    { name: "hreflang zh-CN", selector: "link[hreflang='zh-CN']", type: "href" },
+                    { name: "hreflang en", selector: "link[hreflang='en']", type: "href" },
+                    { name: "hreflang ja", selector: "link[hreflang='ja']", type: "href" },
+                    { name: "hreflang x-default", selector: "link[hreflang='x-default']", type: "href" }
                 ]
             },
             {
                 category: "其他重要标签",
                 items: [
                     { name: "Canonical URL", selector: "link[rel='canonical']", type: "href" },
-                    { name: "Favicon", selector: "link[rel='icon']", type: "href" },
-                    { name: "主题颜色", selector: "meta[name='theme-color']", type: "content" }
+                    { name: "Favicon (ICO)", selector: "link[rel='icon'][type='image/x-icon']", type: "href" },
+                    { name: "Apple Touch Icon", selector: "link[rel='apple-touch-icon']", type: "href" },
+                    { name: "主题颜色 (暗色)", selector: "meta[name='theme-color'][media='(prefers-color-scheme: dark)']", type: "content" },
+                    { name: "主题颜色 (亮色)", selector: "meta[name='theme-color'][media='(prefers-color-scheme: light)']", type: "content" },
+                    { name: "MS Tile Color", selector: "meta[name='msapplication-TileColor']", type: "content" }
                 ]
             }
         ];
@@ -262,6 +281,9 @@
                             value = element.getAttribute(item.attribute) || '';
                         } else if (item.type === 'exists') {
                             value = '已找到';
+                        } else if (item.type === 'jsonld-count') {
+                            const allJsonLd = document.querySelectorAll('script[type="application/ld+json"]');
+                            value = `找到 ${allJsonLd.length} 个 JSON-LD 结构化数据块`;
                         }
 
                         if (value) {

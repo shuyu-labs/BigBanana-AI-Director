@@ -69,8 +69,8 @@ const OptionSelector: React.FC<Props> = ({
         </div>
       )}
       {helpText && (
-        <div className="pt-1 px-3 py-2 bg-zinc-900/30 border border-zinc-800/50 rounded-md">
-          <p className="text-[10px] text-zinc-500 leading-relaxed">
+        <div className="pt-1 px-3 py-2 bg-[var(--nav-hover-bg)] border border-[var(--border-primary)] rounded-md">
+          <p className="text-[10px] text-[var(--text-tertiary)] leading-relaxed">
             💡 提示：{helpText}
             {helpLink && (
               <>
@@ -79,7 +79,7 @@ const OptionSelector: React.FC<Props> = ({
                   href={helpLink.url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-zinc-400 hover:text-white underline underline-offset-2 transition-colors font-medium"
+                  className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2 transition-colors font-medium"
                 >
                   {helpLink.text}
                 </a>

@@ -63,29 +63,29 @@ const SceneCard: React.FC<SceneCardProps> = ({
   };
 
   return (
-    <div className="bg-[#141414] border border-zinc-800 rounded-xl overflow-hidden flex flex-col group hover:border-zinc-600 transition-all hover:shadow-lg">
+    <div className="bg-[var(--bg-surface)] border border-[var(--border-primary)] rounded-xl overflow-hidden flex flex-col group hover:border-[var(--border-secondary)] transition-all hover:shadow-lg">
       <div 
-        className="aspect-video bg-zinc-900 relative cursor-pointer"
+        className="aspect-video bg-[var(--bg-elevated)] relative cursor-pointer"
         onClick={() => scene.referenceImage && onImageClick(scene.referenceImage)}
       >
         {scene.referenceImage ? (
           <>
             <img src={scene.referenceImage} alt={scene.location} className="w-full h-full object-cover" />
-            <div className="absolute top-2 right-2 p-1 bg-indigo-500 text-white rounded shadow-lg backdrop-blur">
+            <div className="absolute top-2 right-2 p-1 bg-[var(--accent)] text-[var(--text-primary)] rounded shadow-lg backdrop-blur">
               <Check className="w-3 h-3" />
             </div>
           </>
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-zinc-700 p-4 text-center">
+          <div className="w-full h-full flex flex-col items-center justify-center text-[var(--text-muted)] p-4 text-center">
             {isGenerating ? (
               <>
-                <Loader2 className="w-10 h-10 mb-3 animate-spin text-indigo-500" />
-                <span className="text-[10px] text-zinc-500">生成中...</span>
+                <Loader2 className="w-10 h-10 mb-3 animate-spin text-[var(--accent)]" />
+                <span className="text-[10px] text-[var(--text-tertiary)]">生成中...</span>
               </>
             ) : scene.status === 'failed' ? (
               <>
-                <AlertCircle className="w-10 h-10 mb-3 text-red-500" />
-                <span className="text-[10px] text-red-500 mb-2">生成失败</span>
+                <AlertCircle className="w-10 h-10 mb-3 text-[var(--error)]" />
+                <span className="text-[10px] text-[var(--error)] mb-2">生成失败</span>
                 <ImageUploadButton
                   variant="inline"
                   size="small"
@@ -114,8 +114,8 @@ const SceneCard: React.FC<SceneCardProps> = ({
         )}
       </div>
       
-      <div className="p-3 border-t border-zinc-800 bg-[#111]">
-        <div className="flex justify-between items-center mb-1">
+      <div className="p-3 border-t border-[var(--border-primary)] bg-[var(--bg-base)]">
+        <div className="flex justify-between items-center mb-1 gap-2">
           {isEditingLocation ? (
             <input
               type="text"
@@ -124,17 +124,17 @@ const SceneCard: React.FC<SceneCardProps> = ({
               onBlur={handleSaveLocation}
               onKeyPress={(e) => e.key === 'Enter' && handleSaveLocation()}
               autoFocus
-              className="font-bold text-zinc-200 text-sm bg-zinc-800 border border-zinc-600 rounded px-2 py-1 flex-1 mr-2 focus:outline-none focus:border-indigo-500"
+              className="font-bold text-[var(--text-secondary)] text-sm bg-[var(--bg-hover)] border border-[var(--border-secondary)] rounded px-2 py-1 flex-1 min-w-0 focus:outline-none focus:border-[var(--accent)]"
             />
           ) : (
-            <div className="flex items-center gap-2 flex-1 group/location">
-              <h3 className="font-bold text-zinc-200 text-sm truncate">{scene.location}</h3>
+            <div className="flex items-center gap-2 flex-1 min-w-0 group/location">
+              <h3 className="font-bold text-[var(--text-secondary)] text-sm truncate" title={scene.location}>{scene.location}</h3>
               <button
                 onClick={() => {
                   setEditLocation(scene.location);
                   setIsEditingLocation(true);
                 }}
-                className="opacity-0 group-hover/location:opacity-100 text-zinc-500 hover:text-zinc-300 transition-opacity flex-shrink-0"
+                className="opacity-0 group-hover/location:opacity-100 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-opacity flex-shrink-0"
               >
                 <Edit2 className="w-3 h-3" />
               </button>
@@ -148,7 +148,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
               onBlur={handleSaveTime}
               onKeyPress={(e) => e.key === 'Enter' && handleSaveTime()}
               autoFocus
-              className="px-1.5 py-0.5 bg-zinc-800 border border-zinc-600 text-zinc-300 text-[9px] rounded uppercase font-mono focus:outline-none focus:border-indigo-500 w-24"
+              className="px-1.5 py-0.5 bg-[var(--bg-hover)] border border-[var(--border-secondary)] text-[var(--text-secondary)] text-[9px] rounded uppercase font-mono focus:outline-none focus:border-[var(--accent)] w-24 shrink-0"
             />
           ) : (
             <span
@@ -156,7 +156,8 @@ const SceneCard: React.FC<SceneCardProps> = ({
                 setEditTime(scene.time);
                 setIsEditingTime(true);
               }}
-              className="px-1.5 py-0.5 bg-zinc-900 text-zinc-500 text-[9px] rounded border border-zinc-800 uppercase font-mono cursor-pointer hover:bg-zinc-800 hover:text-zinc-300 transition-colors"
+              className="px-1.5 py-0.5 bg-[var(--bg-elevated)] text-[var(--text-tertiary)] text-[9px] rounded border border-[var(--border-primary)] uppercase font-mono cursor-pointer hover:bg-[var(--bg-hover)] hover:text-[var(--text-secondary)] transition-colors shrink-0 whitespace-nowrap overflow-hidden max-w-[80px] text-center"
+              title={scene.time}
             >
               {scene.time}
             </span>
@@ -170,7 +171,7 @@ const SceneCard: React.FC<SceneCardProps> = ({
             onBlur={handleSaveAtmosphere}
             onKeyPress={(e) => e.key === 'Enter' && handleSaveAtmosphere()}
             autoFocus
-            className="text-[10px] text-zinc-300 w-full bg-zinc-800 border border-zinc-600 rounded px-2 py-1 mb-3 focus:outline-none focus:border-indigo-500"
+            className="text-[10px] text-[var(--text-secondary)] w-full bg-[var(--bg-hover)] border border-[var(--border-secondary)] rounded px-2 py-1 mb-3 focus:outline-none focus:border-[var(--accent)]"
           />
         ) : (
           <p
@@ -178,26 +179,26 @@ const SceneCard: React.FC<SceneCardProps> = ({
               setEditAtmosphere(scene.atmosphere);
               setIsEditingAtmosphere(true);
             }}
-            className="text-[10px] text-zinc-500 line-clamp-1 mb-3 cursor-pointer hover:text-zinc-300 transition-colors"
+            className="text-[10px] text-[var(--text-tertiary)] line-clamp-1 mb-3 cursor-pointer hover:text-[var(--text-secondary)] transition-colors"
           >
             {scene.atmosphere}
           </p>
         )}
 
         {/* Scene Prompt Section */}
-        <div className="mt-3 pt-3 border-t border-zinc-800">
+        <div className="mt-3 pt-3 border-t border-[var(--border-primary)]">
           <PromptEditor
             prompt={scene.visualPrompt || ''}
             onSave={onPromptSave}
             label="场景提示词"
             placeholder="输入场景视觉描述..."
-            maxHeight="max-h-[120px]"
+            maxHeight="max-h-[160px]"
           />
         </div>
 
         {/* Regenerate and Upload Buttons */}
         {scene.referenceImage && (
-          <div className="mt-3 pt-3 border-t border-zinc-800">
+          <div className="mt-3 pt-3 border-t border-[var(--border-primary)]">
             <ImageUploadButton
               variant="separate"
               hasImage={true}
@@ -209,11 +210,11 @@ const SceneCard: React.FC<SceneCardProps> = ({
           </div>
         )}
 
-        <div className="mt-3 pt-3 border-t border-zinc-800">
+        <div className="mt-3 pt-3 border-t border-[var(--border-primary)]">
           <button
             onClick={onAddToLibrary}
             disabled={isGenerating}
-            className="w-full py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 rounded text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-full py-2 bg-[var(--bg-elevated)] hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-primary)] rounded text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <FolderPlus className="w-3 h-3" />
             加入资产库
@@ -221,11 +222,11 @@ const SceneCard: React.FC<SceneCardProps> = ({
         </div>
 
         {/* Delete Button */}
-        <div className="mt-3 pt-3 border-t border-zinc-800">
+        <div className="mt-3 pt-3 border-t border-[var(--border-primary)]">
           <button
             onClick={onDelete}
             disabled={isGenerating}
-            className="w-full py-2 bg-transparent hover:bg-red-950/10 text-red-400 hover:text-red-300 border border-red-500/50 hover:border-red-400 rounded text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-full py-2 bg-transparent hover:bg-[var(--error-bg)] text-[var(--error-text)] hover:text-[var(--error-text)] border border-[var(--error-border)] hover:border-[var(--error-border)] rounded text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <Trash2 className="w-3 h-3" />
             删除场景

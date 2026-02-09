@@ -12,7 +12,7 @@ const WorkflowPage: React.FC<WorkflowPageProps> = ({ onNext }) => {
   return (
     <div className="flex flex-col items-center text-center">
       {/* 标题 */}
-      <h2 className="text-2xl font-bold text-white mb-8">
+      <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-8">
         四步出片，就这么简单
       </h2>
 
@@ -24,13 +24,13 @@ const WorkflowPage: React.FC<WorkflowPageProps> = ({ onNext }) => {
             return (
               <React.Fragment key={index}>
                 <div className="flex flex-col items-center">
-                  <div className="w-12 h-12 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center mb-2">
-                    <Icon className="w-5 h-5 text-indigo-400" />
+                  <div className="w-12 h-12 rounded-xl bg-[var(--accent-bg)] border border-[var(--accent-border)] flex items-center justify-center mb-2">
+                    <Icon className="w-5 h-5 text-[var(--accent-text)]" />
                   </div>
-                  <span className="text-[10px] text-zinc-500 font-mono">{step.number}</span>
+                  <span className="text-[10px] text-[var(--text-tertiary)] font-mono">{step.number}</span>
                 </div>
                 {index < WORKFLOW_STEPS.length - 1 && (
-                  <ArrowRight className="w-4 h-4 text-zinc-600 flex-shrink-0" />
+                  <ArrowRight className="w-4 h-4 text-[var(--text-muted)] flex-shrink-0" />
                 )}
               </React.Fragment>
             );
@@ -42,11 +42,11 @@ const WorkflowPage: React.FC<WorkflowPageProps> = ({ onNext }) => {
           {WORKFLOW_STEPS.map((step, index) => (
             <div 
               key={index}
-              className="flex items-center gap-3 bg-zinc-900/50 border border-zinc-800 rounded-lg px-4 py-3"
+              className="flex items-center gap-3 bg-[var(--nav-hover-bg)] border border-[var(--border-primary)] rounded-lg px-4 py-3"
             >
-              <span className="text-indigo-400 font-bold text-sm">{step.number}</span>
-              <span className="text-white font-medium text-sm">{step.title}</span>
-              <span className="text-zinc-500 text-xs">→ {step.description}</span>
+              <span className="text-[var(--accent-text)] font-bold text-sm">{step.number}</span>
+              <span className="text-[var(--text-primary)] font-medium text-sm">{step.title}</span>
+              <span className="text-[var(--text-tertiary)] text-xs">→ {step.description}</span>
             </div>
           ))}
         </div>
@@ -55,7 +55,7 @@ const WorkflowPage: React.FC<WorkflowPageProps> = ({ onNext }) => {
       {/* 主按钮 */}
       <button
         onClick={onNext}
-        className="px-8 py-3 bg-white text-black font-bold text-sm rounded-lg hover:bg-zinc-200 transition-all duration-200 transform hover:scale-105"
+        className="px-8 py-3 bg-[var(--btn-primary-bg)] text-[var(--btn-primary-text)] font-bold text-sm rounded-lg hover:bg-[var(--btn-primary-hover)] transition-all duration-200 transform hover:scale-105"
       >
         继续了解
       </button>

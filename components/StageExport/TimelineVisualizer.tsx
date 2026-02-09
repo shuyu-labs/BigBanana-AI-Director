@@ -10,13 +10,13 @@ interface Props {
 const TimelineVisualizer: React.FC<Props> = ({ shots }) => {
   return (
     <div className="mb-10">
-      <div className="flex justify-between text-[10px] text-zinc-600 font-mono uppercase tracking-widest mb-2 px-1">
+      <div className="flex justify-between text-[10px] text-[var(--text-muted)] font-mono uppercase tracking-widest mb-2 px-1">
         <span>Sequence Map</span>
         <span>TC 00:00:00:00</span>
       </div>
       <div className={STYLES.timeline.container}>
         {shots.length === 0 ? (
-          <div className="w-full flex items-center justify-center text-zinc-800 text-xs font-mono uppercase tracking-widest">
+          <div className="w-full flex items-center justify-center text-[var(--text-muted)] text-xs font-mono uppercase tracking-widest">
             <Film className="w-4 h-4 mr-2" />
             No Shots Available
           </div>
@@ -32,11 +32,11 @@ const TimelineVisualizer: React.FC<Props> = ({ shots }) => {
                 title={`Shot ${idx+1}: ${shot.actionSummary}`}
               >
                 {/* Mini Progress Bar inside timeline segment */}
-                {isDone && <div className="h-full w-full bg-indigo-500/20"></div>}
+                {isDone && <div className="h-full w-full bg-[var(--accent-bg)]"></div>}
                 
                 {/* Hover Tooltip */}
                 <div className={STYLES.timeline.tooltip}>
-                  <div className="bg-black text-white text-[10px] px-2 py-1 rounded border border-zinc-700 shadow-xl">
+                  <div className="bg-[var(--bg-base)] text-[var(--text-primary)] text-[10px] px-2 py-1 rounded border border-[var(--border-secondary)] shadow-xl">
                     Shot {idx + 1}
                   </div>
                 </div>

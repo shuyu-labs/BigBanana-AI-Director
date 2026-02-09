@@ -57,8 +57,8 @@ export const AspectRatioSelector: React.FC<AspectRatioSelectorProps> = ({
           className={`
             flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs transition-all
             ${value === option.value
-              ? 'bg-indigo-600 text-white'
-              : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200'
+              ? 'bg-[var(--accent)] text-[var(--text-primary)]'
+              : 'bg-[var(--bg-hover)] text-[var(--text-tertiary)] hover:bg-[var(--border-secondary)] hover:text-[var(--text-secondary)]'
             }
             ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
           `}
@@ -100,8 +100,8 @@ export const VideoDurationSelector: React.FC<VideoDurationSelectorProps> = ({
           className={`
             px-3 py-1.5 rounded-md text-xs transition-all
             ${value === d
-              ? 'bg-indigo-600 text-white'
-              : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200'
+              ? 'bg-[var(--accent)] text-[var(--text-primary)]'
+              : 'bg-[var(--bg-hover)] text-[var(--text-tertiary)] hover:bg-[var(--border-secondary)] hover:text-[var(--text-secondary)]'
             }
             ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
           `}
@@ -157,7 +157,7 @@ export const VideoSettingsPanel: React.FC<VideoSettingsPanelProps> = ({
   return (
     <div className="flex items-center gap-4 flex-wrap">
       <div className="flex items-center gap-2">
-        <span className="text-[10px] text-zinc-500 uppercase">比例</span>
+        <span className="text-[10px] text-[var(--text-tertiary)] uppercase">比例</span>
         <AspectRatioSelector
           value={aspectRatio}
           onChange={onAspectRatioChange}
@@ -168,7 +168,7 @@ export const VideoSettingsPanel: React.FC<VideoSettingsPanelProps> = ({
       
       {showDuration && (
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-zinc-500 uppercase">时长</span>
+          <span className="text-[10px] text-[var(--text-tertiary)] uppercase">时长</span>
           <div className="flex gap-1">
             {availableDurations.map((d) => (
               <button
@@ -178,8 +178,8 @@ export const VideoSettingsPanel: React.FC<VideoSettingsPanelProps> = ({
                 className={`
                   px-3 py-1.5 rounded-md text-xs transition-all
                   ${duration === d
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200'
+                    ? 'bg-[var(--accent)] text-[var(--text-primary)]'
+                    : 'bg-[var(--bg-hover)] text-[var(--text-tertiary)] hover:bg-[var(--border-secondary)] hover:text-[var(--text-secondary)]'
                   }
                   ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                 `}

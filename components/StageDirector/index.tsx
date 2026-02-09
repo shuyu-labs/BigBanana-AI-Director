@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { LayoutGrid, Sparkles, Loader2, AlertCircle, Edit2, Film, Video as VideoIcon } from 'lucide-react';
-import { ProjectState, Shot, Keyframe, AspectRatio, VideoDuration } from '../../types';
-import { generateImage, generateVideo, generateActionSuggestion, optimizeKeyframePrompt, optimizeBothKeyframes, enhanceKeyframePrompt, splitShotIntoSubShots } from '../../services/geminiService';
+import { ProjectState, Shot, Keyframe, AspectRatio, VideoDuration, NineGridPanel, NineGridData } from '../../types';
+import { generateImage, generateVideo, generateActionSuggestion, optimizeKeyframePrompt, optimizeBothKeyframes, enhanceKeyframePrompt, splitShotIntoSubShots, generateNineGridPanels, generateNineGridImage } from '../../services/aiService';
 import { 
   getRefImagesForShot, 
+  getPropsInfoForShot,
   buildKeyframePrompt,
   buildKeyframePromptWithAI,
   buildVideoPrompt,
@@ -15,23 +16,28 @@ import {
   updateKeyframeInShot,
   generateSubShotIds,
   createSubShot,
-  replaceShotWithSubShots
+  replaceShotWithSubShots,
+  buildPromptFromNineGridPanel,
+  cropPanelFromNineGrid
 } from './utils';
 import { DEFAULTS } from './constants';
 import EditModal from './EditModal';
 import ShotCard from './ShotCard';
 import ShotWorkbench from './ShotWorkbench';
 import ImagePreviewModal from './ImagePreviewModal';
+import NineGridPreview from './NineGridPreview';
 import { useAlert } from '../GlobalAlert';
-import { getDefaultAspectRatio } from '../../services/modelRegistry';
+import { AspectRatioSelector } from '../AspectRatioSelector';
+import { getUserAspectRatio, setUserAspectRatio } from '../../services/modelRegistry';
 
 interface Props {
   project: ProjectState;
   updateProject: (updates: Partial<ProjectState> | ((prev: ProjectState) => ProjectState)) => void;
   onApiKeyError?: (error: any) => boolean;
+  onGeneratingChange?: (isGenerating: boolean) => void;
 }
 
-const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError }) => {
+const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError, onGeneratingChange }) => {
   const { showAlert } = useAlert();
   const [activeShotId, setActiveShotId] = useState<string | null>(null);
   const [batchProgress, setBatchProgress] = useState<{current: number, total: number, message: string} | null>(null);
@@ -39,9 +45,16 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
   const [isAIGenerating, setIsAIGenerating] = useState(false);
   const [useAIEnhancement, setUseAIEnhancement] = useState(false); // 是否使用AI增强提示词
   const [isSplittingShot, setIsSplittingShot] = useState(false); // 是否正在拆分镜头
+  const [showNineGrid, setShowNineGrid] = useState(false); // 是否显示九宫格预览弹窗
   
-  // 关键帧生成使用的横竖屏比例（从默认配置获取）
-  const [keyframeAspectRatio, setKeyframeAspectRatio] = useState<AspectRatio>(() => getDefaultAspectRatio());
+  // 关键帧生成使用的横竖屏比例（从持久化配置读取）
+  const [keyframeAspectRatio, setKeyframeAspectRatioState] = useState<AspectRatio>(() => getUserAspectRatio());
+  
+  // 包装 setKeyframeAspectRatio，同时持久化到模型配置
+  const setKeyframeAspectRatio = (ratio: AspectRatio) => {
+    setKeyframeAspectRatioState(ratio);
+    setUserAspectRatio(ratio);
+  };
   
   // 统一的编辑状态
   const [editModal, setEditModal] = useState<{
@@ -65,7 +78,8 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
     const hasStuckGenerating = project.shots.some(shot => {
       const stuckKeyframes = shot.keyframes?.some(kf => kf.status === 'generating' && !kf.imageUrl);
       const stuckVideo = shot.interval?.status === 'generating' && !shot.interval?.videoUrl;
-      return stuckKeyframes || stuckVideo;
+      const stuckNineGrid = (shot.nineGrid?.status === 'generating_panels' || shot.nineGrid?.status === 'generating_image' || (shot.nineGrid?.status as string) === 'generating') && !shot.nineGrid?.imageUrl;
+      return stuckKeyframes || stuckVideo || stuckNineGrid;
     });
 
     if (hasStuckGenerating) {
@@ -81,11 +95,40 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
           ),
           interval: shot.interval && shot.interval.status === 'generating' && !shot.interval.videoUrl
             ? { ...shot.interval, status: 'failed' as const }
-            : shot.interval
+            : shot.interval,
+          nineGrid: shot.nineGrid && (shot.nineGrid.status === 'generating_panels' || shot.nineGrid.status === 'generating_image' || (shot.nineGrid.status as string) === 'generating') && !shot.nineGrid.imageUrl
+            ? { ...shot.nineGrid, status: 'failed' as const }
+            : shot.nineGrid
         }))
       }));
     }
   }, [project.id]); // 仅在项目ID变化时运行，避免重复执行
+
+  /**
+   * 上报生成状态给父组件，用于导航锁定
+   * 检测所有可能的生成中状态：批量生成、单个关键帧、视频、九宫格、镜头拆分
+   */
+  useEffect(() => {
+    const hasGeneratingKeyframes = project.shots.some(shot => 
+      shot.keyframes?.some(kf => kf.status === 'generating')
+    );
+    const hasGeneratingVideo = project.shots.some(shot => 
+      shot.interval?.status === 'generating'
+    );
+    const hasGeneratingNineGrid = project.shots.some(shot => 
+      shot.nineGrid?.status === 'generating_panels' || shot.nineGrid?.status === 'generating_image'
+    );
+    
+    const generating = !!batchProgress || hasGeneratingKeyframes || hasGeneratingVideo || hasGeneratingNineGrid || isSplittingShot;
+    onGeneratingChange?.(generating);
+  }, [batchProgress, project.shots, isSplittingShot]);
+
+  // 组件卸载时重置生成状态
+  useEffect(() => {
+    return () => {
+      onGeneratingChange?.(false);
+    };
+  }, []);
 
   /**
    * 更新镜头
@@ -95,6 +138,33 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
       ...prevProject,
       shots: prevProject.shots.map(s => s.id === shotId ? transform(s) : s)
     }));
+  };
+
+  /**
+   * 删除分镜
+   */
+  const handleDeleteShot = (shotId: string) => {
+    const shot = project.shots.find(s => s.id === shotId);
+    if (!shot) return;
+
+    const shotIndex = project.shots.findIndex(s => s.id === shotId);
+    const displayName = `SHOT ${String(shotIndex + 1).padStart(3, '0')}`;
+
+    showAlert(`确定要删除 ${displayName} 吗？此操作不可撤销。`, {
+      type: 'warning',
+      showCancel: true,
+      onConfirm: () => {
+        // 如果当前选中的就是被删除的分镜，则关闭工作台
+        if (activeShotId === shotId) {
+          setActiveShotId(null);
+        }
+        updateProject((prevProject: ProjectState) => ({
+          ...prevProject,
+          shots: prevProject.shots.filter(s => s.id !== shotId)
+        }));
+        showAlert(`${displayName} 已删除`, { type: 'success' });
+      }
+    });
   };
 
   /**
@@ -119,23 +189,26 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
       })
     }));
     
+    // 获取道具信息用于提示词注入
+    const propsInfo = getPropsInfoForShot(shot, project.scriptData);
+    
     // 根据开关选择是否使用AI增强
     let prompt: string;
     if (useAIEnhancement) {
       try {
-        prompt = await buildKeyframePromptWithAI(basePrompt, visualStyle, shot.cameraMovement, type, true);
+        prompt = await buildKeyframePromptWithAI(basePrompt, visualStyle, shot.cameraMovement, type, true, propsInfo);
       } catch (error) {
         console.error('AI增强失败,使用基础提示词:', error);
-        prompt = buildKeyframePrompt(basePrompt, visualStyle, shot.cameraMovement, type);
+        prompt = buildKeyframePrompt(basePrompt, visualStyle, shot.cameraMovement, type, propsInfo);
       }
     } else {
-      prompt = buildKeyframePrompt(basePrompt, visualStyle, shot.cameraMovement, type);
+      prompt = buildKeyframePrompt(basePrompt, visualStyle, shot.cameraMovement, type, propsInfo);
     }
     
     try {
-      const referenceImages = getRefImagesForShot(shot, project.scriptData);
-      // 使用当前设置的横竖屏比例生成关键帧
-      const url = await generateImage(prompt, referenceImages, keyframeAspectRatio);
+      const refResult = getRefImagesForShot(shot, project.scriptData);
+      // 使用当前设置的横竖屏比例生成关键帧，传递 hasTurnaround 标记
+      const url = await generateImage(prompt, refResult.images, keyframeAspectRatio, false, refResult.hasTurnaround);
 
       updateProject((prevProject: ProjectState) => ({
         ...prevProject,
@@ -207,23 +280,33 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
   const handleGenerateVideo = async (shot: Shot, aspectRatio: AspectRatio = '16:9', duration: VideoDuration = 8, modelId?: string) => {
     const sKf = shot.keyframes?.find(k => k.type === 'start');
     const eKf = shot.keyframes?.find(k => k.type === 'end');
-
-    if (!sKf?.imageUrl) return showAlert("请先生成起始帧！", { type: 'warning' });
-
+    
     // 使用传入的 modelId 或默认模型
     let selectedModel: string = modelId || shot.videoModel || DEFAULTS.videoModel;
-    // 规范化模型名称：'veo_3_1_i2v_s_fast_fl_landscape' -> 'veo'
-    if (selectedModel.startsWith('veo_3_1')) {
+    // 规范化模型名称：旧模型名 -> 'veo'
+    if (selectedModel.startsWith('veo_3_1') || selectedModel === 'veo-r2v' || selectedModel.startsWith('veo_3_0_r2v')) {
       selectedModel = 'veo';
     }
     
+    // 必须有起始帧
+    if (!sKf?.imageUrl) {
+      return showAlert("请先生成起始帧！", { type: 'warning' });
+    }
+    
     const projectLanguage = project.language || project.scriptData?.language || '中文';
+    
+    // 检测是否为九宫格分镜模式：首帧图片就是九宫格整图时触发
+    const isNineGridMode = (shot.nineGrid?.status === 'completed' 
+        && shot.nineGrid?.imageUrl 
+        && sKf?.imageUrl === shot.nineGrid.imageUrl);
     
     const videoPrompt = buildVideoPrompt(
       shot.actionSummary,
       shot.cameraMovement,
       selectedModel,
-      projectLanguage
+      projectLanguage,
+      isNineGridMode ? shot.nineGrid : undefined,
+      duration
     );
     
     const intervalId = shot.interval?.id || generateId(`int-${shot.id}`);
@@ -234,7 +317,7 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
       videoModel: selectedModel as any,
       interval: s.interval ? { ...s.interval, status: 'generating', videoPrompt } : {
         id: intervalId,
-        startKeyframeId: sKf.id,
+        startKeyframeId: sKf?.id || '',
         endKeyframeId: eKf?.id || '',
         duration: duration,
         motionStrength: 5,
@@ -246,7 +329,7 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
     try {
       const videoUrl = await generateVideo(
         videoPrompt, 
-        sKf.imageUrl, 
+        sKf?.imageUrl,
         eKf?.imageUrl,
         selectedModel,
         aspectRatio,
@@ -257,7 +340,7 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
         ...s,
         interval: s.interval ? { ...s.interval, videoUrl, status: 'completed' } : {
           id: intervalId,
-          startKeyframeId: sKf.id,
+          startKeyframeId: sKf?.id || '',
           endKeyframeId: eKf?.id || '',
           duration: 10,
           motionStrength: 5,
@@ -598,6 +681,22 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
   const handleSplitShot = async (shot: Shot) => {
     if (!shot) return;
     
+    // 弹出确认提示，告知用户拆分的含义
+    showAlert(
+      'AI拆分镜头会将当前镜头按不同景别与视角拆分为多个子镜头，原镜头将被替换为拆分后的子镜头序列。此操作不可撤销，建议在拆分前确认镜头内容已编辑完成。\n\n确定要继续拆分吗？',
+      {
+        title: 'AI拆分镜头',
+        type: 'warning',
+        showCancel: true,
+        confirmText: '确认拆分',
+        cancelText: '取消',
+        onConfirm: () => executeSplitShot(shot),
+      }
+    );
+  };
+
+  /** 执行AI拆分镜头的实际逻辑 */
+  const executeSplitShot = async (shot: Shot) => {
     // 1. 获取场景信息
     const scene = project.scriptData?.scenes.find(s => String(s.id) === String(shot.sceneId));
     if (!scene) {
@@ -657,10 +756,235 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
     }
   };
 
+  /**
+   * 九宫格分镜预览 - 第一步：生成镜头描述
+   * 使用 AI 将镜头拆分为 9 个不同视角的文字描述，等待用户确认/编辑后再生成图片
+   */
+  const handleGenerateNineGrid = async (shot: Shot) => {
+    if (!shot) return;
+    
+    // 1. 获取场景信息
+    const scene = project.scriptData?.scenes.find(s => String(s.id) === String(shot.sceneId));
+    if (!scene) {
+      showAlert('找不到场景信息', { type: 'warning' });
+      return;
+    }
+    
+    // 2. 获取角色名称
+    const characterNames: string[] = [];
+    if (shot.characters && project.scriptData?.characters) {
+      shot.characters.forEach(charId => {
+        const char = project.scriptData?.characters.find(c => String(c.id) === String(charId));
+        if (char) characterNames.push(char.name);
+      });
+    }
+    
+    const visualStyle = project.visualStyle || project.scriptData?.visualStyle || 'live-action';
+    
+    // 3. 显示弹窗并设置生成状态（仅生成面板描述）
+    setShowNineGrid(true);
+    updateShot(shot.id, (s) => ({
+      ...s,
+      nineGrid: {
+        panels: [],
+        status: 'generating_panels' as const
+      }
+    }));
+    
+    try {
+      // 4. 调用 AI 拆分镜头为 9 个视角（仅文字描述，不生成图片）
+      const panels = await generateNineGridPanels(
+        shot.actionSummary,
+        shot.cameraMovement,
+        {
+          location: scene.location,
+          time: scene.time,
+          atmosphere: scene.atmosphere
+        },
+        characterNames,
+        visualStyle
+      );
+      
+      // 5. 更新状态为 panels_ready，等待用户确认
+      updateShot(shot.id, (s) => ({
+        ...s,
+        nineGrid: {
+          panels,
+          status: 'panels_ready' as const
+        }
+      }));
+      
+      showAlert('9个镜头描述已生成，请检查并编辑后确认生成图片', { type: 'success' });
+      
+    } catch (e: any) {
+      console.error('九宫格镜头描述生成失败:', e);
+      updateShot(shot.id, (s) => ({
+        ...s,
+        nineGrid: {
+          panels: s.nineGrid?.panels || [],
+          status: 'failed' as const
+        }
+      }));
+      
+      if (onApiKeyError && onApiKeyError(e)) return;
+      showAlert(`镜头描述生成失败: ${e.message}`, { type: 'error' });
+    }
+  };
+
+  /**
+   * 九宫格分镜预览 - 第二步：确认并生成图片
+   * 用户确认/编辑完面板描述后，调用图片生成 API 生成九宫格图片
+   */
+  const handleConfirmNineGridPanels = async (confirmedPanels: NineGridPanel[]) => {
+    if (!activeShot) return;
+    
+    const visualStyle = project.visualStyle || project.scriptData?.visualStyle || 'live-action';
+    
+    // 1. 更新面板数据并设置生成图片状态
+    updateShot(activeShot.id, (s) => ({
+      ...s,
+      nineGrid: {
+        panels: confirmedPanels,
+        status: 'generating_image' as const
+      }
+    }));
+    
+    try {
+      // 2. 收集参考图片
+      const refResult = getRefImagesForShot(activeShot, project.scriptData);
+      
+      // 3. 生成九宫格图片
+      const imageUrl = await generateNineGridImage(confirmedPanels, refResult.images, visualStyle, keyframeAspectRatio);
+      
+      // 4. 更新状态为完成
+      updateShot(activeShot.id, (s) => ({
+        ...s,
+        nineGrid: {
+          panels: confirmedPanels,
+          imageUrl,
+          prompt: `Nine Grid Storyboard - ${activeShot.actionSummary}`,
+          status: 'completed' as const
+        }
+      }));
+      
+      showAlert('九宫格分镜图片生成完成！', { type: 'success' });
+      
+    } catch (e: any) {
+      console.error('九宫格图片生成失败:', e);
+      updateShot(activeShot.id, (s) => ({
+        ...s,
+        nineGrid: {
+          panels: confirmedPanels,
+          status: 'failed' as const
+        }
+      }));
+      
+      if (onApiKeyError && onApiKeyError(e)) return;
+      showAlert(`九宫格图片生成失败: ${e.message}`, { type: 'error' });
+    }
+  };
+
+  /**
+   * 九宫格分镜预览 - 仅重新生成图片（保留已有的面板描述文案）
+   * 当用户对文案满意但图片效果不好时使用
+   */
+  const handleRegenerateNineGridImage = async () => {
+    if (!activeShot || !activeShot.nineGrid?.panels || activeShot.nineGrid.panels.length !== 9) return;
+    
+    // 直接使用已有的面板描述重新生成图片
+    handleConfirmNineGridPanels(activeShot.nineGrid.panels);
+  };
+
+  /**
+   * 九宫格分镜预览 - 更新单个面板描述（用户在弹窗中编辑）
+   */
+  const handleUpdateNineGridPanel = (index: number, updatedPanel: Partial<NineGridPanel>) => {
+    if (!activeShot || !activeShot.nineGrid) return;
+    
+    updateShot(activeShot.id, (s) => {
+      if (!s.nineGrid) return s;
+      const newPanels = [...s.nineGrid.panels];
+      newPanels[index] = { ...newPanels[index], ...updatedPanel };
+      return {
+        ...s,
+        nineGrid: {
+          ...s.nineGrid,
+          panels: newPanels
+        }
+      };
+    });
+  };
+
+  /**
+   * 九宫格分镜预览 - 选择面板
+   * 从九宫格图片中裁剪选中的面板，直接作为首帧使用（九宫格与首帧是替代关系）
+   */
+  const handleSelectNineGridPanel = async (panel: NineGridPanel) => {
+    if (!activeShot || !activeShot.nineGrid?.imageUrl) return;
+    
+    const visualStyle = project.visualStyle || project.scriptData?.visualStyle || 'live-action';
+    
+    // 1. 构建首帧提示词（保留视角信息，方便后续重新生成）
+    const shotPropsInfo = getPropsInfoForShot(activeShot, project.scriptData);
+    const prompt = buildPromptFromNineGridPanel(
+      panel,
+      activeShot.actionSummary,
+      visualStyle,
+      activeShot.cameraMovement,
+      shotPropsInfo
+    );
+    
+    const existingKf = activeShot.keyframes?.find(k => k.type === 'start');
+    const kfId = existingKf?.id || generateId(`kf-${activeShot.id}-start`);
+    
+    try {
+      // 2. 从九宫格图片中裁剪出选中的面板
+      const croppedImageUrl = await cropPanelFromNineGrid(activeShot.nineGrid.imageUrl, panel.index);
+      
+      // 3. 将裁剪后的图片直接设为首帧（九宫格与首帧是替代关系）
+      updateShot(activeShot.id, (s) => {
+        return updateKeyframeInShot(
+          s,
+          'start',
+          createKeyframe(kfId, 'start', prompt, croppedImageUrl, 'completed')
+        );
+      });
+      
+      // 4. 关闭弹窗
+      setShowNineGrid(false);
+      showAlert(`已将「${panel.shotSize}/${panel.cameraAngle}」视角设为首帧`, { type: 'success' });
+    } catch (e: any) {
+      console.error('裁剪九宫格面板失败:', e);
+      showAlert(`裁剪失败: ${e.message}`, { type: 'error' });
+    }
+  };
+
+  /**
+   * 九宫格分镜预览 - 整张图直接用作首帧
+   */
+  const handleUseWholeNineGridAsFrame = () => {
+    if (!activeShot || !activeShot.nineGrid?.imageUrl) return;
+    
+    const existingKf = activeShot.keyframes?.find(k => k.type === 'start');
+    const kfId = existingKf?.id || generateId(`kf-${activeShot.id}-start`);
+    const prompt = `九宫格分镜全图 - ${activeShot.actionSummary}`;
+    
+    updateShot(activeShot.id, (s) => {
+      return updateKeyframeInShot(
+        s,
+        'start',
+        createKeyframe(kfId, 'start', prompt, activeShot.nineGrid!.imageUrl!, 'completed')
+      );
+    });
+    
+    setShowNineGrid(false);
+    showAlert('已将九宫格整图设为首帧', { type: 'success' });
+  };
+
   // 空状态
   if (!project.shots.length) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-zinc-500 bg-[#121212]">
+      <div className="flex flex-col items-center justify-center h-full text-[var(--text-tertiary)] bg-[var(--bg-secondary)]">
         <AlertCircle className="w-12 h-12 mb-4 opacity-50"/>
         <p>暂无镜头数据，请先返回阶段 1 生成分镜表。</p>
       </div>
@@ -668,53 +992,64 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#121212] relative overflow-hidden">
+    <div className="flex flex-col h-full bg-[var(--bg-secondary)] relative overflow-hidden">
       
       {/* Batch Progress Overlay */}
       {batchProgress && (
-        <div className="absolute inset-0 z-50 bg-black/80 flex flex-col items-center justify-center backdrop-blur-md animate-in fade-in">
-          <Loader2 className="w-12 h-12 text-indigo-500 animate-spin mb-6" />
-          <h3 className="text-xl font-bold text-white mb-2">{batchProgress.message}</h3>
-          <div className="w-64 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+        <div className="absolute inset-0 z-50 bg-[var(--bg-base)]/80 flex flex-col items-center justify-center backdrop-blur-md animate-in fade-in">
+          <Loader2 className="w-12 h-12 text-[var(--accent)] animate-spin mb-6" />
+          <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2">{batchProgress.message}</h3>
+          <div className="w-64 h-1.5 bg-[var(--bg-hover)] rounded-full overflow-hidden">
             <div 
-              className="h-full bg-indigo-500 transition-all duration-300" 
+              className="h-full bg-[var(--accent)] transition-all duration-300" 
               style={{ width: `${(batchProgress.current / batchProgress.total) * 100}%` }}
             />
           </div>
-          <p className="text-zinc-500 mt-3 text-xs font-mono">
+          <p className="text-[var(--text-tertiary)] mt-3 text-xs font-mono">
             {Math.round((batchProgress.current / batchProgress.total) * 100)}%
           </p>
         </div>
       )}
 
       {/* Toolbar */}
-      <div className="h-16 border-b border-zinc-800 bg-[#1A1A1A] px-6 flex items-center justify-between shrink-0">
+      <div className="h-16 border-b border-[var(--border-primary)] bg-[var(--bg-elevated)] px-6 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-4">
-          <h2 className="text-lg font-bold text-white flex items-center gap-3">
-            <LayoutGrid className="w-5 h-5 text-indigo-500" />
+          <h2 className="text-lg font-bold text-[var(--text-primary)] flex items-center gap-3">
+            <LayoutGrid className="w-5 h-5 text-[var(--accent)]" />
             导演工作台
-            <span className="text-xs text-zinc-600 font-mono font-normal uppercase tracking-wider bg-black/30 px-2 py-1 rounded">
+            <span className="text-xs text-[var(--text-muted)] font-mono font-normal uppercase tracking-wider bg-[var(--bg-base)]/30 px-2 py-1 rounded">
               Director Workbench
             </span>
           </h2>
         </div>
 
         <div className="flex items-center gap-3">
+          {/* 横竖屏选择 */}
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-[var(--text-tertiary)] uppercase">比例</span>
+            <AspectRatioSelector
+              value={keyframeAspectRatio}
+              onChange={setKeyframeAspectRatio}
+              allowSquare={false}
+              disabled={!!batchProgress}
+            />
+          </div>
+          <div className="w-px h-6 bg-[var(--bg-hover)]" />
           {/* AI增强开关 */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-black/30 border border-zinc-800">
-            <Sparkles className={`w-3.5 h-3.5 ${useAIEnhancement ? 'text-indigo-400' : 'text-zinc-600'}`} />
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[var(--bg-base)]/30 border border-[var(--border-primary)]">
+            <Sparkles className={`w-3.5 h-3.5 ${useAIEnhancement ? 'text-[var(--accent-text)]' : 'text-[var(--text-muted)]'}`} />
             <label className="flex items-center gap-2 cursor-pointer">
-              <span className="text-xs text-zinc-400">AI增强提示词</span>
+              <span className="text-xs text-[var(--text-tertiary)]">AI增强提示词</span>
               <input
                 type="checkbox"
                 checked={useAIEnhancement}
                 onChange={(e) => setUseAIEnhancement(e.target.checked)}
-                className="w-3.5 h-3.5 rounded border-zinc-600 bg-zinc-800 text-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
+                className="w-3.5 h-3.5 rounded border-[var(--border-secondary)] bg-[var(--bg-hover)] text-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-0 cursor-pointer"
               />
             </label>
           </div>
           
-          <span className="text-xs text-zinc-500 mr-4 font-mono">
+          <span className="text-xs text-[var(--text-tertiary)] mr-4 font-mono">
             {project.shots.filter(s => s.interval?.videoUrl).length} / {project.shots.length} 完成
           </span>
           <button 
@@ -722,8 +1057,8 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
             disabled={!!batchProgress}
             className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wide transition-all flex items-center gap-2 ${
               allStartFramesGenerated
-                ? 'bg-[#141414] text-zinc-400 border border-zinc-700 hover:text-white hover:border-zinc-500'
-                : 'bg-white text-black hover:bg-zinc-200 shadow-lg shadow-white/5'
+                ? 'bg-[var(--bg-surface)] text-[var(--text-tertiary)] border border-[var(--border-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-secondary)]'
+                : 'bg-[var(--btn-primary-bg)] text-[var(--btn-primary-text)] hover:bg-[var(--btn-primary-hover)] shadow-lg shadow-[var(--btn-primary-shadow)]'
             }`}
           >
             <Sparkles className="w-3 h-3" />
@@ -735,7 +1070,7 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
       {/* Main Content Area */}
       <div className="flex-1 overflow-hidden flex">
         {/* Grid View */}
-        <div className={`flex-1 overflow-y-auto p-6 transition-all duration-500 ease-in-out ${activeShotId ? 'border-r border-zinc-800' : ''}`}>
+        <div className={`flex-1 overflow-y-auto p-6 transition-all duration-500 ease-in-out ${activeShotId ? 'border-r border-[var(--border-primary)]' : ''}`}>
           <div className={`grid gap-4 ${activeShotId ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'}`}>
             {project.shots.map((shot, idx) => (
               <ShotCard
@@ -744,6 +1079,7 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
                 index={idx}
                 isActive={activeShotId === shot.id}
                 onClick={() => setActiveShotId(shot.id)}
+                onDelete={handleDeleteShot}
               />
             ))}
           </div>
@@ -756,6 +1092,7 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
             shotIndex={activeShotIndex}
             totalShots={project.shots.length}
             scriptData={project.scriptData}
+            currentVideoModelId={activeShot.videoModel || DEFAULTS.videoModel}
             nextShotHasStartFrame={!!project.shots[activeShotIndex + 1]?.keyframes?.find(k => k.type === 'start')?.imageUrl}
             isAIOptimizing={isAIGenerating}
             isSplittingShot={isSplittingShot}
@@ -778,6 +1115,8 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
               characterVariations: { ...(s.characterVariations || {}), [charId]: varId }
             }))}
             onSceneChange={(sceneId) => updateShot(activeShot.id, s => ({ ...s, sceneId }))}
+            onAddProp={(propId) => updateShot(activeShot.id, s => ({ ...s, props: [...(s.props || []), propId] }))}
+            onRemoveProp={(propId) => updateShot(activeShot.id, s => ({ ...s, props: (s.props || []).filter(id => id !== propId) }))}
             onGenerateKeyframe={(type) => handleGenerateKeyframe(activeShot, type)}
             onUploadKeyframe={(type) => handleUploadKeyframeImage(activeShot, type)}
             onEditKeyframePrompt={(type, prompt) => setEditModal({ type: 'keyframe', value: prompt, frameType: type })}
@@ -788,17 +1127,27 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
             useAIEnhancement={useAIEnhancement}
             onToggleAIEnhancement={() => setUseAIEnhancement(!useAIEnhancement)}
             onGenerateVideo={(aspectRatio, duration, modelId) => handleGenerateVideo(activeShot, aspectRatio, duration, modelId)}
+            onVideoModelChange={(modelId) => updateShot(activeShot.id, s => ({
+              ...s,
+              videoModel: modelId as any
+            }))}
             onEditVideoPrompt={() => {
               // 如果videoPrompt不存在，动态生成一个
               let promptValue = activeShot.interval?.videoPrompt;
               if (!promptValue) {
                 const selectedModel = activeShot.videoModel || DEFAULTS.videoModel;
                 const projectLanguage = project.language || project.scriptData?.language || '中文';
+                const startKf = activeShot.keyframes?.find(k => k.type === 'start');
+                // 首帧等于九宫格图时触发九宫格分镜模式
+                const isNineGridMode = (activeShot.nineGrid?.status === 'completed'
+                    && activeShot.nineGrid?.imageUrl
+                    && startKf?.imageUrl === activeShot.nineGrid.imageUrl);
                 promptValue = buildVideoPrompt(
                   activeShot.actionSummary,
                   activeShot.cameraMovement,
                   selectedModel,
-                  projectLanguage
+                  projectLanguage,
+                  isNineGridMode ? activeShot.nineGrid : undefined
                 );
               }
               setEditModal({ 
@@ -807,9 +1156,29 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
               });
             }}
             onImageClick={(url, title) => setPreviewImage({ url, title })}
+            onGenerateNineGrid={() => handleGenerateNineGrid(activeShot)}
+            nineGrid={activeShot.nineGrid}
+            onSelectNineGridPanel={handleSelectNineGridPanel}
+            onShowNineGrid={() => setShowNineGrid(true)}
           />
         )}
       </div>
+
+      {/* Nine Grid Preview Modal */}
+      {activeShot && (
+        <NineGridPreview
+          isOpen={showNineGrid}
+          nineGrid={activeShot.nineGrid}
+          onClose={() => setShowNineGrid(false)}
+          onSelectPanel={handleSelectNineGridPanel}
+          onUseWholeImage={handleUseWholeNineGridAsFrame}
+          onRegenerate={() => handleGenerateNineGrid(activeShot)}
+          onRegenerateImage={handleRegenerateNineGridImage}
+          onConfirmPanels={handleConfirmNineGridPanels}
+          onUpdatePanel={handleUpdateNineGridPanel}
+          aspectRatio={keyframeAspectRatio}
+        />
+      )}
 
       {/* Edit Modal */}
       <EditModal
@@ -822,9 +1191,9 @@ const StageDirector: React.FC<Props> = ({ project, updateProject, onApiKeyError 
           '编辑视频提示词'
         }
         icon={
-          editModal?.type === 'action' ? <Film className="w-4 h-4 text-indigo-400" /> :
-          editModal?.type === 'keyframe' ? <Edit2 className="w-4 h-4 text-indigo-400" /> :
-          <VideoIcon className="w-4 h-4 text-indigo-400" />
+          editModal?.type === 'action' ? <Film className="w-4 h-4 text-[var(--accent-text)]" /> :
+          editModal?.type === 'keyframe' ? <Edit2 className="w-4 h-4 text-[var(--accent-text)]" /> :
+          <VideoIcon className="w-4 h-4 text-[var(--accent-text)]" />
         }
         value={editModal?.value || ''}
         onChange={(value) => setEditModal(editModal ? { ...editModal, value } : null)}

@@ -37,17 +37,17 @@ export const VISUAL_STYLE_OPTIONS = [
 ];
 
 export const STYLES = {
-  input: 'w-full bg-[#141414] border border-zinc-800 text-white px-3 py-2.5 text-sm rounded-md focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-700 transition-all placeholder:text-zinc-700',
-  label: 'text-[10px] font-bold text-zinc-500 uppercase tracking-widest',
-  select: 'w-full bg-[#141414] border border-zinc-800 text-white px-3 py-2.5 text-sm rounded-md appearance-none focus:border-zinc-600 focus:outline-none transition-all cursor-pointer',
+  input: 'w-full bg-[var(--bg-surface)] border border-[var(--border-primary)] text-[var(--text-primary)] px-3 py-2.5 text-sm rounded-md focus:border-[var(--border-secondary)] focus:outline-none focus:ring-1 focus:ring-[var(--border-secondary)] transition-all placeholder:text-[var(--text-muted)]',
+  label: 'text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest',
+  select: 'w-full bg-[var(--bg-surface)] border border-[var(--border-primary)] text-[var(--text-primary)] px-3 py-2.5 text-sm rounded-md appearance-none focus:border-[var(--border-secondary)] focus:outline-none transition-all cursor-pointer',
   button: {
-    primary: 'bg-white text-black hover:bg-zinc-200 shadow-lg shadow-white/5',
-    secondary: 'bg-transparent border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200',
-    selected: 'bg-zinc-100 text-black border-zinc-100 shadow-sm',
-    disabled: 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+    primary: 'bg-[var(--btn-primary-bg)] text-[var(--btn-primary-text)] hover:bg-[var(--btn-primary-hover)] shadow-lg shadow-[var(--btn-primary-shadow)]',
+    secondary: 'bg-transparent border-[var(--border-primary)] text-[var(--text-tertiary)] hover:border-[var(--border-secondary)] hover:text-[var(--text-secondary)]',
+    selected: 'bg-[var(--accent-bg-hover)] text-[var(--text-primary)] border-[var(--accent-border)] shadow-sm ring-1 ring-[var(--accent-border)]',
+    disabled: 'bg-[var(--bg-hover)] text-[var(--text-tertiary)] cursor-not-allowed'
   },
   editor: {
-    textarea: 'w-full bg-[#141414] border border-zinc-700 text-zinc-300 px-3 py-2 text-sm rounded-md focus:border-zinc-500 focus:outline-none resize-none',
+    textarea: 'w-full bg-[var(--bg-surface)] border border-[var(--border-secondary)] text-[var(--text-secondary)] px-3 py-2 text-sm rounded-md focus:border-[var(--border-primary)] focus:outline-none resize-none',
     mono: 'font-mono',
     serif: 'font-serif italic'
   }

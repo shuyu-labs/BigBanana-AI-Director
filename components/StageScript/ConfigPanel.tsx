@@ -15,6 +15,7 @@ interface Props {
   customStyleInput: string;
   isProcessing: boolean;
   error: string | null;
+  onShowModelConfig?: () => void;
   onTitleChange: (value: string) => void;
   onDurationChange: (value: string) => void;
   onLanguageChange: (value: string) => void;
@@ -37,6 +38,7 @@ const ConfigPanel: React.FC<Props> = ({
   customStyleInput,
   isProcessing,
   error,
+  onShowModelConfig,
   onTitleChange,
   onDurationChange,
   onLanguageChange,
@@ -48,11 +50,11 @@ const ConfigPanel: React.FC<Props> = ({
   onAnalyze
 }) => {
   return (
-    <div className="w-96 border-r border-zinc-800 flex flex-col bg-[#0A0A0A]">
+    <div className="w-96 border-r border-[var(--border-primary)] flex flex-col bg-[var(--bg-primary)]">
       {/* Header */}
-      <div className="h-14 px-5 border-b border-zinc-800 flex items-center justify-between shrink-0">
-        <h2 className="text-sm font-bold text-white tracking-wide flex items-center gap-2">
-          <BookOpen className="w-4 h-4 text-zinc-400" />
+      <div className="h-14 px-5 border-b border-[var(--border-primary)] flex items-center justify-between shrink-0">
+        <h2 className="text-sm font-bold text-[var(--text-primary)] tracking-wide flex items-center gap-2">
+          <BookOpen className="w-4 h-4 text-[var(--text-tertiary)]" />
           项目配置
         </h2>
       </div>
@@ -85,7 +87,7 @@ const ConfigPanel: React.FC<Props> = ({
               ))}
             </select>
             <div className="absolute right-3 top-3 pointer-events-none">
-              <ChevronRight className="w-4 h-4 text-zinc-600 rotate-90" />
+              <ChevronRight className="w-4 h-4 text-[var(--text-muted)] rotate-90" />
             </div>
           </div>
         </div>
@@ -111,8 +113,16 @@ const ConfigPanel: React.FC<Props> = ({
             disabled={isProcessing}
             label="分镜生成模型"
           />
-          <p className="text-[9px] text-zinc-600">
-            在 <span className="text-indigo-400">模型配置</span> 中可添加更多模型
+          <p className="text-[9px] text-[var(--text-muted)]">
+            在{' '}
+            <button
+              type="button"
+              onClick={onShowModelConfig}
+              className="text-[var(--accent-text)] hover:text-[var(--accent-text-hover)] underline underline-offset-2 transition-colors"
+            >
+              模型配置
+            </button>{' '}
+            中可添加更多模型
           </p>
         </div>
 
@@ -131,7 +141,7 @@ const ConfigPanel: React.FC<Props> = ({
       </div>
 
       {/* Action Button */}
-      <div className="p-6 border-t border-zinc-800 bg-[#0A0A0A]">
+      <div className="p-6 border-t border-[var(--border-primary)] bg-[var(--bg-primary)]">
         <button
           onClick={onAnalyze}
           disabled={isProcessing}
@@ -154,7 +164,7 @@ const ConfigPanel: React.FC<Props> = ({
           )}
         </button>
         {error && (
-          <div className="mt-4 p-3 bg-red-900/10 border border-red-900/50 text-red-500 text-xs rounded flex items-center gap-2">
+          <div className="mt-4 p-3 bg-[var(--error-bg)] border border-[var(--error-border)] text-[var(--error)] text-xs rounded flex items-center gap-2">
             <AlertCircle className="w-3 h-3 flex-shrink-0" />
             {error}
           </div>

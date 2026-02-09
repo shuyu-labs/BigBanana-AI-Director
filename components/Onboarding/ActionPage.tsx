@@ -16,12 +16,12 @@ const ActionPage: React.FC<ActionPageProps> = ({ onComplete, onQuickStart }) => 
   return (
     <div className="flex flex-col items-center text-center">
       {/* 标题 */}
-      <h2 className="text-2xl font-bold text-white mb-2">
+      <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">
         现在就开始创作
       </h2>
 
       {/* 说明文案 */}
-      <p className="text-zinc-500 text-sm mb-8">
+      <p className="text-[var(--text-tertiary)] text-sm mb-8">
         选一个方式，马上体验
       </p>
 
@@ -33,17 +33,17 @@ const ActionPage: React.FC<ActionPageProps> = ({ onComplete, onQuickStart }) => 
             <button
               key={option.id}
               onClick={() => onQuickStart(option.id as 'script' | 'example')}
-              className="w-full flex items-center gap-4 bg-zinc-900/50 border border-zinc-800 rounded-xl p-4 text-left hover:border-indigo-500/50 hover:bg-zinc-900 transition-all group"
+              className="w-full flex items-center gap-4 bg-[var(--nav-hover-bg)] border border-[var(--border-primary)] rounded-xl p-4 text-left hover:border-[var(--accent-border)] hover:bg-[var(--bg-elevated)] transition-all group"
             >
-              <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-500/20 transition-colors">
-                <Icon className="w-5 h-5 text-indigo-400" />
+              <div className="w-12 h-12 rounded-xl bg-[var(--accent-bg)] border border-[var(--accent-border)] flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--accent-bg)] transition-colors">
+                <Icon className="w-5 h-5 text-[var(--accent-text)]" />
               </div>
               <div>
-                <h3 className="text-white font-bold text-sm mb-1 flex items-center gap-2">
+                <h3 className="text-[var(--text-primary)] font-bold text-sm mb-1 flex items-center gap-2">
                   <span>{option.icon}</span>
                   {option.title}
                 </h3>
-                <p className="text-zinc-500 text-xs">{option.description}</p>
+                <p className="text-[var(--text-tertiary)] text-xs">{option.description}</p>
               </div>
             </button>
           );
@@ -53,13 +53,13 @@ const ActionPage: React.FC<ActionPageProps> = ({ onComplete, onQuickStart }) => 
       {/* 主按钮 */}
       <button
         onClick={onComplete}
-        className="px-8 py-3 bg-white text-black font-bold text-sm rounded-lg hover:bg-zinc-200 transition-all duration-200 transform hover:scale-105"
+        className="px-8 py-3 bg-[var(--btn-primary-bg)] text-[var(--btn-primary-text)] font-bold text-sm rounded-lg hover:bg-[var(--btn-primary-hover)] transition-all duration-200 transform hover:scale-105"
       >
         创建我的第一部短剧
       </button>
 
       {/* 辅助入口 */}
-      <p className="mt-6 text-[10px] text-zinc-600">
+      <p className="mt-6 text-[10px] text-[var(--text-muted)]">
         以后可在侧边栏「帮助」中重新查看引导
       </p>
     </div>

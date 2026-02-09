@@ -35,17 +35,17 @@ const VideoPlayerModal: React.FC<Props> = ({
     <div className={STYLES.videoModal.overlay}>
       <div className={STYLES.videoModal.container}>
         {/* Header */}
-        <div className="p-4 border-b border-zinc-800 bg-[#141414] flex items-center justify-between shrink-0">
+        <div className="p-4 border-b border-[var(--border-primary)] bg-[var(--bg-surface)] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <Play className="w-5 h-5 text-indigo-500" />
-            <h3 className="text-lg font-bold text-white">视频预览</h3>
-            <span className="px-2 py-0.5 bg-zinc-900 border border-zinc-700 text-zinc-400 text-[10px] rounded uppercase font-mono tracking-wider">
+            <Play className="w-5 h-5 text-[var(--accent)]" />
+            <h3 className="text-lg font-bold text-[var(--text-primary)]">视频预览</h3>
+            <span className="px-2 py-0.5 bg-[var(--bg-elevated)] border border-[var(--border-secondary)] text-[var(--text-tertiary)] text-[10px] rounded uppercase font-mono tracking-wider">
               Shot {shotOriginalIndex + 1} / {project.shots.length}
             </span>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-hover)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -71,21 +71,21 @@ const VideoPlayerModal: React.FC<Props> = ({
           {/* Play/Pause Overlay Button */}
           <button
             onClick={onPlayPause}
-            className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/30 transition-colors group"
+            className="absolute inset-0 flex items-center justify-center bg-transparent hover:bg-[var(--overlay-light)] transition-colors group"
           >
             {!isPlaying && (
               <div className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Play className="w-10 h-10 text-white ml-1" />
+                <Play className="w-10 h-10 text-[var(--text-primary)] ml-1" />
               </div>
             )}
           </button>
         </div>
 
         {/* Shot Info */}
-        <div className="p-4 border-t border-zinc-800 bg-[#141414]">
-          <p className="text-sm text-zinc-300 mb-2 line-clamp-2">{currentShot.actionSummary}</p>
+        <div className="p-4 border-t border-[var(--border-primary)] bg-[var(--bg-surface)]">
+          <p className="text-sm text-[var(--text-secondary)] mb-2 line-clamp-2">{currentShot.actionSummary}</p>
           {currentShot.dialogue && (
-            <p className="text-xs text-indigo-400 italic">"{currentShot.dialogue}"</p>
+            <p className="text-xs text-[var(--accent-text)] italic">"{currentShot.dialogue}"</p>
           )}
         </div>
 
@@ -95,38 +95,38 @@ const VideoPlayerModal: React.FC<Props> = ({
             <button
               onClick={onPrevShot}
               disabled={currentShotIndex === 0}
-              className="w-10 h-10 rounded-lg bg-zinc-900 hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed text-white flex items-center justify-center transition-colors"
+              className="w-10 h-10 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-hover)] disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] flex items-center justify-center transition-colors"
             >
               <SkipBack className="w-5 h-5" />
             </button>
             <button
               onClick={onPlayPause}
-              className="w-12 h-10 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center transition-colors"
+              className="w-12 h-10 rounded-lg bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--text-primary)] flex items-center justify-center transition-colors"
             >
               {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
             </button>
             <button
               onClick={onNextShot}
               disabled={currentShotIndex === completedShots.length - 1}
-              className="w-10 h-10 rounded-lg bg-zinc-900 hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed text-white flex items-center justify-center transition-colors"
+              className="w-10 h-10 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-hover)] disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] flex items-center justify-center transition-colors"
             >
               <SkipForward className="w-5 h-5" />
             </button>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-zinc-500 font-mono">
+            <span className="text-xs text-[var(--text-tertiary)] font-mono">
               {currentShotIndex + 1} / {completedShots.length}
             </span>
-            <div className="w-px h-4 bg-zinc-700"></div>
-            <span className="text-xs text-zinc-500 uppercase tracking-wider">
+            <div className="w-px h-4 bg-[var(--border-secondary)]"></div>
+            <span className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider">
               {currentShot.cameraMovement}
             </span>
           </div>
 
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-white text-black hover:bg-zinc-200 rounded-lg text-xs font-bold uppercase tracking-widest transition-colors"
+            className="px-4 py-2 bg-[var(--btn-primary-bg)] text-[var(--btn-primary-text)] hover:bg-[var(--btn-primary-hover)] rounded-lg text-xs font-bold uppercase tracking-widest transition-colors"
           >
             Close
           </button>

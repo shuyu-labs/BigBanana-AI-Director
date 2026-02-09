@@ -16,6 +16,7 @@ interface VideoGeneratorProps {
   hasEndFrame: boolean;
   onGenerate: (aspectRatio: AspectRatio, duration: VideoDuration, modelId: string) => void;
   onEditPrompt: () => void;
+  onModelChange?: (modelId: string) => void;
 }
 
 const VideoGenerator: React.FC<VideoGeneratorProps> = ({
@@ -23,13 +24,14 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = ({
   hasStartFrame,
   hasEndFrame,
   onGenerate,
-  onEditPrompt
+  onEditPrompt,
+  onModelChange
 }) => {
   // 获取可用的视频模型
   const videoModels = getVideoModels().filter(m => m.isEnabled);
   const defaultModel = getActiveVideoModel();
   
-  // 状态
+  // 状态（废弃模型已在数据加载层迁移，此处无需额外处理）
   const [selectedModelId, setSelectedModelId] = useState<string>(
     shot.videoModel || defaultModel?.id || videoModels[0]?.id || 'sora-2'
   );
@@ -61,22 +63,24 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = ({
     onGenerate(aspectRatio, duration, selectedModelId);
   };
 
+  const canGenerate = hasStartFrame;
+
   return (
-    <div className="bg-[#141414] rounded-xl p-5 border border-zinc-800 space-y-4">
+    <div className="bg-[var(--bg-surface)] rounded-xl p-5 border border-[var(--border-primary)] space-y-4">
       <div className="flex items-center justify-between">
-        <h4 className="text-xs font-bold text-white uppercase tracking-widest flex items-center gap-2">
-          <Video className="w-3 h-3 text-indigo-500" />
+        <h4 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-widest flex items-center gap-2">
+          <Video className="w-3 h-3 text-[var(--accent)]" />
           视频生成
           <button 
             onClick={onEditPrompt}
-            className="p-1 text-yellow-400 hover:text-white transition-colors"
+            className="p-1 text-[var(--warning-text)] hover:text-[var(--text-primary)] transition-colors"
             title="预览/编辑视频提示词"
           >
             <Edit2 className="w-3 h-3" />
           </button>
         </h4>
         {shot.interval?.status === 'completed' && (
-          <span className="text-[10px] text-green-500 font-mono flex items-center gap-1">
+          <span className="text-[10px] text-[var(--success)] font-mono flex items-center gap-1">
             ● READY
           </span>
         )}
@@ -84,18 +88,22 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = ({
       
       {/* Model Selector */}
       <div className="space-y-2">
-        <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block">
+        <label className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest block">
           选择视频模型
         </label>
         <select
           value={selectedModelId}
-          onChange={(e) => setSelectedModelId(e.target.value)}
-          className="w-full bg-black text-white border border-zinc-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-indigo-500 transition-colors"
+          onChange={(e) => {
+            const newModelId = e.target.value;
+            setSelectedModelId(newModelId);
+            onModelChange?.(newModelId);
+          }}
+          className="w-full bg-[var(--bg-base)] text-[var(--text-primary)] border border-[var(--border-secondary)] rounded-lg px-3 py-2 text-xs outline-none focus:border-[var(--accent)] transition-colors"
           disabled={isGenerating}
         >
           {videoModels.map((model) => {
             const vm = model as VideoModelDefinition;
-            const modeLabel = vm.params.mode === 'async' ? '异步' : '同步';
+            const modeLabel = vm.params.mode === 'async' ? '异步' : '首尾帧';
             return (
               <option key={model.id} value={model.id}>
                 {model.name} ({modeLabel})
@@ -104,11 +112,11 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = ({
           })}
         </select>
         {selectedModel && (
-          <p className="text-[9px] text-zinc-600 font-mono">
+          <p className="text-[9px] text-[var(--text-muted)] font-mono">
             ✦ {selectedModel.name}: 
             {selectedModel.params.mode === 'async' 
               ? ` 支持 ${selectedModel.params.supportedAspectRatios.join('/')}，可选 ${selectedModel.params.supportedDurations.join('/')}秒`
-              : ` 高速生成，支持 ${selectedModel.params.supportedAspectRatios.join('/')}`
+              : ` 首尾帧模式，支持 ${selectedModel.params.supportedAspectRatios.join('/')}`
             }
           </p>
         )}
@@ -116,7 +124,7 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = ({
 
       {/* 视频设置：横竖屏 & 时长 */}
       <div className="space-y-2">
-        <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block">
+        <label className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest block">
           视频设置
         </label>
         <VideoSettingsPanel
@@ -133,29 +141,29 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = ({
       
       {/* Video Preview */}
       {hasVideo ? (
-        <div className="w-full aspect-video bg-black rounded-lg overflow-hidden border border-zinc-700 relative shadow-lg">
+        <div className="w-full aspect-video bg-[var(--bg-base)] rounded-lg overflow-hidden border border-[var(--border-secondary)] relative shadow-lg">
           <video src={shot.interval.videoUrl} controls className="w-full h-full" />
         </div>
       ) : (
-        <div className="w-full aspect-video bg-zinc-900/50 rounded-lg border border-dashed border-zinc-800 flex items-center justify-center">
-          <span className="text-xs text-zinc-600 font-mono">PREVIEW AREA</span>
+        <div className="w-full aspect-video bg-[var(--nav-hover-bg)] rounded-lg border border-dashed border-[var(--border-primary)] flex items-center justify-center">
+          <span className="text-xs text-[var(--text-muted)] font-mono">PREVIEW AREA</span>
         </div>
       )}
 
       {/* Generate Button */}
       <button
         onClick={handleGenerate}
-        disabled={!hasStartFrame || isGenerating}
+        disabled={!canGenerate || isGenerating}
         className={`w-full py-3 rounded-lg font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${
           hasVideo 
-            ? 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-            : 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-600/20'
-        } ${(!hasStartFrame) ? 'opacity-50 cursor-not-allowed' : ''}`}
+            ? 'bg-[var(--bg-hover)] text-[var(--text-secondary)] hover:bg-[var(--border-secondary)]'
+            : 'bg-[var(--accent)] text-[var(--text-primary)] hover:bg-[var(--accent-hover)] shadow-lg shadow-[var(--accent-shadow)]'
+        } ${(!canGenerate) ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
         {isGenerating ? (
           <>
             <Loader2 className="w-4 h-4 animate-spin" />
-            生成视频中 ({aspectRatio}, {modelType === 'sora' ? `${duration}秒` : selectedModel?.name})...
+            {`生成视频中 (${aspectRatio}, ${modelType === 'sora' ? `${duration}秒` : selectedModel?.name})...`}
           </>
         ) : (
           <>{hasVideo ? '重新生成视频' : '开始生成视频'}</>
@@ -164,7 +172,7 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = ({
       
       {/* Status Messages */}
       {!hasEndFrame && (
-        <div className="text-[9px] text-zinc-500 text-center font-mono">
+        <div className="text-[9px] text-[var(--text-tertiary)] text-center font-mono">
           * 未检测到结束帧，将使用单图生成模式 (Image-to-Video)
         </div>
       )}

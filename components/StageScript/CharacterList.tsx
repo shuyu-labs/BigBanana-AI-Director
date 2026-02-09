@@ -22,17 +22,17 @@ const CharacterList: React.FC<Props> = ({
 }) => {
   return (
     <section>
-      <h3 className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-4 flex items-center gap-2">
+      <h3 className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-4 flex items-center gap-2">
         <Users className="w-3 h-3" /> 演员表
       </h3>
       <div className="space-y-3">
         {characters.map(c => (
-          <div key={c.id} className="group cursor-default p-3 rounded-lg hover:bg-zinc-900/50 transition-colors border border-transparent hover:border-zinc-800">
+          <div key={c.id} className="group cursor-default p-3 rounded-lg hover:bg-[var(--nav-hover-bg)] transition-colors border border-transparent hover:border-[var(--border-primary)]">
             <div className="flex justify-between items-start mb-2">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-sm text-zinc-300 font-medium group-hover:text-white">{c.name}</span>
-                  <span className="text-[10px] text-zinc-600 font-mono">{c.gender}</span>
+                  <span className="text-sm text-[var(--text-secondary)] font-medium group-hover:text-[var(--text-primary)]">{c.name}</span>
+                  <span className="text-[10px] text-[var(--text-muted)] font-mono">{c.gender}</span>
                 </div>
                 <InlineEditor
                   isEditing={editingCharacterId === c.id}
@@ -43,7 +43,7 @@ const CharacterList: React.FC<Props> = ({
                   onSave={() => onSave(c.id, editingPrompt)}
                   onCancel={onCancel}
                   placeholder="输入角色视觉描述..."
-                  rows={4}
+                  rows={6}
                   mono={true}
                   emptyText="暂无视觉描述"
                 />

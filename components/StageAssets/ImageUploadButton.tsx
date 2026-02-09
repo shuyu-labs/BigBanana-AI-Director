@@ -28,7 +28,7 @@ const ImageUploadButton: React.FC<ImageUploadButtonProps> = ({
     large: 'px-6 py-3 text-sm',
   };
 
-  const buttonClass = `${sizeClasses[size]} bg-zinc-800 text-zinc-300 hover:bg-zinc-700 rounded font-bold transition-all border border-zinc-700 flex items-center gap-1 cursor-pointer`;
+  const buttonClass = `${sizeClasses[size]} bg-[var(--bg-hover)] text-[var(--text-secondary)] hover:bg-[var(--border-secondary)] rounded font-bold transition-all border border-[var(--border-secondary)] flex items-center gap-1 cursor-pointer`;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -76,7 +76,7 @@ const ImageUploadButton: React.FC<ImageUploadButtonProps> = ({
         <button
           onClick={onGenerate}
           disabled={isGenerating}
-          className={`flex-1 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 border border-zinc-800 transition-colors`}
+          className={`flex-1 py-1.5 bg-[var(--bg-elevated)] hover:bg-[var(--bg-hover)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] rounded text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 border border-[var(--border-primary)] transition-colors`}
         >
           {isGenerating ? (
             <>
@@ -91,7 +91,7 @@ const ImageUploadButton: React.FC<ImageUploadButtonProps> = ({
           )}
         </button>
       )}
-      <label className={`flex-1 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 border border-zinc-800 transition-colors cursor-pointer`}>
+      <label className={`flex-1 py-1.5 bg-[var(--bg-elevated)] hover:bg-[var(--bg-hover)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] rounded text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 border border-[var(--border-primary)] transition-colors cursor-pointer`}>
         <Upload className="w-3 h-3" />
         {uploadLabel}
         <input

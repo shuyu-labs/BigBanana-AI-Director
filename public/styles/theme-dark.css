@@ -1,0 +1,79 @@
+/* 暗色主题 - 语义化颜色令牌 */
+[data-theme="dark"] {
+  --bg-base: #050505;
+  --bg-primary: #0A0A0A;
+  --bg-secondary: #121212;
+  --bg-surface: #141414;
+  --bg-elevated: #1A1A1A;
+  --bg-deep: #0F0F0F;
+  --bg-sunken: #080808;
+  --bg-hover: #27272a;
+  --border-primary: #27272a;
+  --border-secondary: #3f3f46;
+  --border-subtle: #18181b;
+  --text-primary: #ffffff;
+  --text-secondary: #d4d4d8;
+  --text-tertiary: #a1a1aa;
+  --text-muted: #71717a;
+  --scrollbar-track: #0a0a0a;
+  --scrollbar-thumb: #333333;
+  --scrollbar-thumb-hover: #555555;
+  --glass-bg: rgba(20, 20, 20, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --nav-active-bg: rgba(39, 39, 42, 0.5);
+  --nav-hover-bg: rgba(39, 39, 42, 0.3);
+  --btn-primary-bg: #ffffff;
+  --btn-primary-text: #000000;
+  --btn-primary-hover: #e4e4e7;
+  --btn-primary-shadow: rgba(255, 255, 255, 0.05);
+  --btn-selected-bg: #f4f4f5;
+  --btn-selected-border: #f4f4f5;
+  --overlay-heavy: rgba(0, 0, 0, 0.8);
+  --overlay-medium: rgba(0, 0, 0, 0.6);
+  --overlay-light: rgba(0, 0, 0, 0.3);
+  --overlay-full: rgba(0, 0, 0, 0.95);
+  --overlay-border: rgba(255, 255, 255, 0.1);
+  --selection-bg: rgba(255, 255, 255, 0.2);
+  /* 主题强调色 (accent) */
+  --accent: #818cf8;
+  --accent-hover: #6366f1;
+  --accent-muted: #6366f1;
+  --accent-bg: rgba(99, 102, 241, 0.15);
+  --accent-bg-hover: rgba(99, 102, 241, 0.25);
+  --accent-border: rgba(99, 102, 241, 0.3);
+  --accent-text: #a5b4fc;
+  --accent-text-hover: #c7d2fe;
+  --accent-on: #ffffff;
+  --accent-shadow: rgba(99, 102, 241, 0.2);
+  /* 开关/Toggle */
+  --toggle-active: #818cf8;
+  --toggle-inactive: var(--border-secondary);
+  --toggle-knob: #ffffff;
+  /* 状态色: 成功 */
+  --success: #34d399;
+  --success-text: #6ee7b7;
+  --success-bg: rgba(52, 211, 153, 0.1);
+  --success-border: rgba(52, 211, 153, 0.3);
+  /* 状态色: 错误/危险 */
+  --error: #f87171;
+  --error-text: #fca5a5;
+  --error-bg: rgba(248, 113, 113, 0.1);
+  --error-border: rgba(248, 113, 113, 0.3);
+  --error-hover-bg: rgba(127, 29, 29, 0.2);
+  --error-hover-bg-strong: rgba(127, 29, 29, 0.4);
+  /* 状态色: 警告 */
+  --warning: #fbbf24;
+  --warning-text: #fcd34d;
+  --warning-bg: rgba(251, 191, 36, 0.1);
+  --warning-border: rgba(251, 191, 36, 0.3);
+  /* 状态色: 信息 */
+  --info: #60a5fa;
+  --info-text: #93c5fd;
+  --info-bg: rgba(96, 165, 250, 0.1);
+  --info-border: rgba(96, 165, 250, 0.3);
+  /* 辅助标记色: purple (视频提示词) */
+  --tag-purple: #c084fc;
+  --tag-purple-bg: rgba(192, 132, 252, 0.1);
+  --tag-purple-border: rgba(192, 132, 252, 0.3);
+  --tag-purple-hover: rgba(192, 132, 252, 0.1);
+}

@@ -19,10 +19,10 @@ const StatusPanel: React.FC<Props> = ({ project, progress, estimatedDuration }) 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 relative z-10 gap-6">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <h3 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+            <h3 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tracking-tight">
               {project.scriptData?.title || '未命名项目'}
             </h3>
-            <span className="px-2 py-0.5 bg-zinc-900 border border-zinc-700 text-zinc-400 text-[10px] rounded uppercase font-mono tracking-wider">
+            <span className="px-2 py-0.5 bg-[var(--bg-elevated)] border border-[var(--border-secondary)] text-[var(--text-tertiary)] text-[10px] rounded uppercase font-mono tracking-wider">
               Master Sequence
             </span>
           </div>
@@ -31,12 +31,12 @@ const StatusPanel: React.FC<Props> = ({ project, progress, estimatedDuration }) 
               <span className={STYLES.statusPanel.statLabel}>Shots</span>
               <span className={STYLES.statusPanel.statValue}>{project.shots.length}</span>
             </div>
-            <div className="w-px h-6 bg-zinc-800"></div>
+            <div className="w-px h-6 bg-[var(--bg-hover)]"></div>
             <div className={STYLES.statusPanel.stat}>
               <span className={STYLES.statusPanel.statLabel}>Est. Duration</span>
               <span className={STYLES.statusPanel.statValue}>~{estimatedDuration}s</span>
             </div>
-            <div className="w-px h-6 bg-zinc-800"></div>
+            <div className="w-px h-6 bg-[var(--bg-hover)]"></div>
             <div className={STYLES.statusPanel.stat}>
               <span className={STYLES.statusPanel.statLabel}>Target</span>
               <span className={STYLES.statusPanel.statValue}>{project.targetDuration}</span>
@@ -46,11 +46,11 @@ const StatusPanel: React.FC<Props> = ({ project, progress, estimatedDuration }) 
         
         <div className={STYLES.statusPanel.progressBadge}>
           <div className="flex items-baseline justify-end gap-1 mb-1">
-            <span className="text-3xl font-mono font-bold text-indigo-400">{progress}</span>
-            <span className="text-sm text-zinc-500">%</span>
+            <span className="text-3xl font-mono font-bold text-[var(--accent-text)]">{progress}</span>
+            <span className="text-sm text-[var(--text-tertiary)]">%</span>
           </div>
-          <div className="text-[10px] text-zinc-500 uppercase tracking-widest flex items-center justify-end gap-2">
-            {progress === 100 ? <CheckCircle className="w-3 h-3 text-green-500" /> : <BarChart3 className="w-3 h-3" />}
+          <div className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-widest flex items-center justify-end gap-2">
+            {progress === 100 ? <CheckCircle className="w-3 h-3 text-[var(--success)]" /> : <BarChart3 className="w-3 h-3" />}
             Render Status
           </div>
         </div>

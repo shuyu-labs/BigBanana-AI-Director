@@ -40,8 +40,8 @@ const SceneSection: React.FC<Props> = ({
         <div key={scene.id} className={STYLES.card.base}>
           <div className="flex items-start justify-between mb-3">
             <div>
-              <h3 className="text-lg font-bold text-white mb-1">{scene.location}</h3>
-              <p className="text-sm text-zinc-500">
+              <h3 className="text-lg font-bold text-[var(--text-primary)] mb-1">{scene.location}</h3>
+              <p className="text-sm text-[var(--text-tertiary)]">
                 {scene.time} · {scene.atmosphere}
               </p>
             </div>

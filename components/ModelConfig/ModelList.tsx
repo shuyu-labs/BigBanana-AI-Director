@@ -108,23 +108,23 @@ const ModelList: React.FC<ModelListProps> = ({ type, onRefresh }) => {
     <div className="space-y-4">
       {/* 类型说明 */}
       <div className="mb-4">
-        <p className="text-xs text-zinc-400">{typeDescriptions[type]}</p>
+        <p className="text-xs text-[var(--text-tertiary)]">{typeDescriptions[type]}</p>
       </div>
 
       {/* 当前激活模型信息 */}
-      <div className="bg-indigo-500/10 border border-indigo-500/30 rounded-lg p-3">
+      <div className="bg-[var(--accent-bg)] border border-[var(--accent-border)] rounded-lg p-3">
         <div className="flex items-center gap-2 mb-1">
-          <CheckCircle className="w-4 h-4 text-indigo-400" />
-          <span className="text-xs font-bold text-indigo-300">当前使用</span>
+          <CheckCircle className="w-4 h-4 text-[var(--accent-text)]" />
+          <span className="text-xs font-bold text-[var(--accent-text-hover)]">当前使用</span>
         </div>
         {(() => {
           const activeModel = models.find(m => m.id === activeModelId);
           const provider = activeModel ? getProviderById(activeModel.providerId) : null;
           return (
-            <p className="text-[11px] text-zinc-300">
+            <p className="text-[11px] text-[var(--text-secondary)]">
               <span className="font-medium">{activeModel?.name || '未选择'}</span>
               {provider && (
-                <span className="text-zinc-500 ml-2">
+                <span className="text-[var(--text-tertiary)] ml-2">
                   → {provider.name} ({provider.baseUrl})
                 </span>
               )}
@@ -134,9 +134,9 @@ const ModelList: React.FC<ModelListProps> = ({ type, onRefresh }) => {
       </div>
 
       {/* 提示信息 */}
-      <div className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-3 flex items-start gap-2">
-        <Info className="w-4 h-4 text-zinc-500 flex-shrink-0 mt-0.5" />
-        <p className="text-[10px] text-zinc-500 leading-relaxed">
+      <div className="bg-[var(--bg-hover)]/50 border border-[var(--border-secondary)] rounded-lg p-3 flex items-start gap-2">
+        <Info className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0 mt-0.5" />
+        <p className="text-[10px] text-[var(--text-tertiary)] leading-relaxed">
           点击「使用此模型」按钮可切换激活模型。自定义模型配置了独立提供商后，API 请求会发送到对应的地址。
           点击展开按钮可调整模型参数。
         </p>
@@ -168,7 +168,7 @@ const ModelList: React.FC<ModelListProps> = ({ type, onRefresh }) => {
       ) : (
         <button
           onClick={() => setIsAddingModel(true)}
-          className="w-full py-3 border border-dashed border-zinc-700 rounded-lg text-xs text-zinc-500 hover:text-zinc-300 hover:border-zinc-500 transition-colors flex items-center justify-center gap-2"
+          className="w-full py-3 border border-dashed border-[var(--border-secondary)] rounded-lg text-xs text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:border-[var(--border-secondary)] transition-colors flex items-center justify-center gap-2"
         >
           <Plus className="w-4 h-4" />
           添加自定义模型

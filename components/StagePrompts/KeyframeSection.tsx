@@ -50,18 +50,18 @@ const KeyframeSection: React.FC<Props> = ({
                   镜头 {shotIndex + 1}
                 </span>
                 {scene && (
-                  <span className="text-xs text-zinc-500">
+                  <span className="text-xs text-[var(--text-tertiary)]">
                     {scene.location}
                   </span>
                 )}
               </div>
-              <p className="text-sm text-zinc-400">{shot.actionSummary}</p>
-              <p className="text-xs text-zinc-600 mt-1">
+              <p className="text-sm text-[var(--text-tertiary)]">{shot.actionSummary}</p>
+              <p className="text-xs text-[var(--text-muted)] mt-1">
                 {shot.cameraMovement} · {shot.shotSize || '标准镜头'}
               </p>
             </div>
 
-            <div className="space-y-3 pl-4 border-l-2 border-indigo-500/30">
+            <div className="space-y-3 pl-4 border-l-2 border-[var(--accent-border)]">
               {shot.keyframes.map((keyframe) => (
                 <div key={keyframe.id} className={STYLES.card.nested}>
                   <div className="flex items-center justify-between mb-2">
@@ -100,7 +100,7 @@ const KeyframeSection: React.FC<Props> = ({
                   )}
 
                   {keyframe.imageUrl && (
-                    <div className="mt-2 rounded overflow-hidden border border-zinc-800">
+                    <div className="mt-2 rounded overflow-hidden border border-[var(--border-primary)]">
                       <img 
                         src={keyframe.imageUrl} 
                         alt={`关键帧 ${keyframe.type}`}
@@ -113,8 +113,8 @@ const KeyframeSection: React.FC<Props> = ({
 
               {/* Video Prompt Section */}
               {shot.interval && (
-                <div className="mt-3 pt-3 border-t border-zinc-800/50">
-                  <div className="bg-purple-950/30 border border-purple-500/30 rounded p-3">
+                <div className="mt-3 pt-3 border-t border-[var(--border-subtle)]">
+                  <div className="bg-[var(--accent-bg)] border border-[var(--accent-border)] rounded p-3">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <span className={STYLES.badge.videoPrompt}>
@@ -146,9 +146,9 @@ const KeyframeSection: React.FC<Props> = ({
                       <div className="space-y-2">
                         <p className={STYLES.display.small}>
                           {shot.interval.videoPrompt || (
-                            <span className="text-zinc-500">
+                            <span className="text-[var(--text-tertiary)]">
                               {getDefaultVideoPrompt(shot)}
-                              <span className="block mt-1 text-yellow-600/70">
+                              <span className="block mt-1 text-[var(--warning)]">
                                 ⚠ 此视频生成时未保存提示词，以上为推测内容
                               </span>
                             </span>

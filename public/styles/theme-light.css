@@ -1,0 +1,79 @@
+/* 亮色主题 (Claude 风格) - 语义化颜色令牌 */
+[data-theme="light"] {
+  --bg-base: #F7F5F0;
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #FAF9F7;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #F5F3EE;
+  --bg-deep: #F0EDE8;
+  --bg-sunken: #F9F7F4;
+  --bg-hover: #E5E0DA;
+  --border-primary: #E5E0DA;
+  --border-secondary: #D1CDC6;
+  --border-subtle: #EDE9E3;
+  --text-primary: #1A1816;
+  --text-secondary: #44413D;
+  --text-tertiary: #6B6862;
+  --text-muted: #8A8680;
+  --scrollbar-track: #F0EDE8;
+  --scrollbar-thumb: #D1CDC6;
+  --scrollbar-thumb-hover: #ADA9A2;
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(26, 24, 22, 0.08);
+  --nav-active-bg: rgba(229, 224, 218, 0.8);
+  --nav-hover-bg: rgba(229, 224, 218, 0.5);
+  --btn-primary-bg: #1A1816;
+  --btn-primary-text: #ffffff;
+  --btn-primary-hover: #2D2A26;
+  --btn-primary-shadow: rgba(26, 24, 22, 0.1);
+  --btn-selected-bg: #E5E0DA;
+  --btn-selected-border: #E5E0DA;
+  --overlay-heavy: rgba(0, 0, 0, 0.6);
+  --overlay-medium: rgba(0, 0, 0, 0.4);
+  --overlay-light: rgba(0, 0, 0, 0.2);
+  --overlay-full: rgba(0, 0, 0, 0.85);
+  --overlay-border: rgba(0, 0, 0, 0.1);
+  --selection-bg: rgba(26, 24, 22, 0.15);
+  /* 主题强调色 (accent) - Claude 暖棕/琥珀色调 */
+  --accent: #B5936B;
+  --accent-hover: #A07D57;
+  --accent-muted: #C4A882;
+  --accent-bg: rgba(181, 147, 107, 0.12);
+  --accent-bg-hover: rgba(181, 147, 107, 0.2);
+  --accent-border: rgba(181, 147, 107, 0.35);
+  --accent-text: #8B6E4E;
+  --accent-text-hover: #6B5138;
+  --accent-on: #ffffff;
+  --accent-shadow: rgba(181, 147, 107, 0.2);
+  /* 开关/Toggle */
+  --toggle-active: #B5936B;
+  --toggle-inactive: var(--border-secondary);
+  --toggle-knob: #ffffff;
+  /* 状态色: 成功 */
+  --success: #16a34a;
+  --success-text: #15803d;
+  --success-bg: rgba(22, 163, 74, 0.08);
+  --success-border: rgba(22, 163, 74, 0.25);
+  /* 状态色: 错误/危险 */
+  --error: #dc2626;
+  --error-text: #b91c1c;
+  --error-bg: rgba(220, 38, 38, 0.06);
+  --error-border: rgba(220, 38, 38, 0.2);
+  --error-hover-bg: rgba(220, 38, 38, 0.08);
+  --error-hover-bg-strong: rgba(220, 38, 38, 0.15);
+  /* 状态色: 警告 */
+  --warning: #d97706;
+  --warning-text: #b45309;
+  --warning-bg: rgba(217, 119, 6, 0.08);
+  --warning-border: rgba(217, 119, 6, 0.25);
+  /* 状态色: 信息 */
+  --info: #2563eb;
+  --info-text: #1d4ed8;
+  --info-bg: rgba(37, 99, 235, 0.06);
+  --info-border: rgba(37, 99, 235, 0.2);
+  /* 辅助标记色: purple (视频提示词) */
+  --tag-purple: #7c3aed;
+  --tag-purple-bg: rgba(124, 58, 237, 0.08);
+  --tag-purple-border: rgba(124, 58, 237, 0.2);
+  --tag-purple-hover: rgba(124, 58, 237, 0.08);
+}

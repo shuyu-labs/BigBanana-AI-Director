@@ -2,7 +2,7 @@
  * StagePrompts 工具函数
  */
 
-import { ProjectState, Character, Scene, Shot } from '../../types';
+import { ProjectState, Character, Scene, Prop, Shot } from '../../types';
 
 /**
  * 保存不同类型的提示词编辑
@@ -10,7 +10,7 @@ import { ProjectState, Character, Scene, Shot } from '../../types';
 export const savePromptEdit = (
   project: ProjectState,
   editingPrompt: {
-    type: 'character' | 'character-variation' | 'scene' | 'keyframe' | 'video';
+    type: 'character' | 'character-variation' | 'scene' | 'prop' | 'keyframe' | 'video';
     id: string;
     variationId?: string;
     shotId?: string;
@@ -54,6 +54,16 @@ export const savePromptEdit = (
           scene.id === editingPrompt.id
             ? { ...scene, visualPrompt: editingPrompt.value }
             : scene
+        );
+      }
+      break;
+
+    case 'prop':
+      if (newProject.scriptData) {
+        newProject.scriptData.props = (newProject.scriptData.props || []).map(prop =>
+          prop.id === editingPrompt.id
+            ? { ...prop, visualPrompt: editingPrompt.value }
+            : prop
         );
       }
       break;
@@ -119,6 +129,17 @@ export const filterScenes = (scenes: Scene[], searchQuery: string): Scene[] => {
   return scenes.filter(scene => 
     filterBySearch(scene.location, searchQuery) || 
     filterBySearch(scene.visualPrompt || '', searchQuery)
+  );
+};
+
+/**
+ * 过滤道具
+ */
+export const filterProps = (props: Prop[], searchQuery: string): Prop[] => {
+  return props.filter(prop => 
+    filterBySearch(prop.name, searchQuery) || 
+    filterBySearch(prop.description || '', searchQuery) ||
+    filterBySearch(prop.visualPrompt || '', searchQuery)
   );
 };
 

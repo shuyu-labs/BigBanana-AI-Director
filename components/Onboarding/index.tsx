@@ -94,16 +94,16 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onQuickStart, curre
     <div className="fixed inset-0 z-[200] flex items-center justify-center">
       {/* 背景遮罩 */}
       <div 
-        className="absolute inset-0 bg-black/90 backdrop-blur-sm"
+        className="absolute inset-0 bg-[var(--bg-base)]/90 backdrop-blur-sm"
         onClick={handleSkip}
       />
 
       {/* 弹窗容器 */}
-      <div className="relative z-10 w-full max-w-lg mx-4 bg-[#0A0A0A] border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 fade-in duration-300">
+      <div className="relative z-10 w-full max-w-lg mx-4 bg-[var(--bg-primary)] border border-[var(--border-primary)] rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 fade-in duration-300">
         {/* 关闭按钮 */}
         <button
           onClick={handleSkip}
-          className="absolute top-4 right-4 z-20 w-8 h-8 flex items-center justify-center text-zinc-500 hover:text-white transition-colors rounded-full hover:bg-zinc-800"
+          className="absolute top-4 right-4 z-20 w-8 h-8 flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors rounded-full hover:bg-[var(--bg-hover)]"
           aria-label="关闭引导"
         >
           <X className="w-4 h-4" />

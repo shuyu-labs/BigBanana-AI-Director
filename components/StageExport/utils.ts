@@ -96,11 +96,11 @@ export const getLogTypeIcon = (type: string): string => {
  */
 export const getStatusColorClass = (status: string): string => {
   const colorMap: Record<string, string> = {
-    'success': 'text-green-400 bg-green-500/10 border-green-500/30',
-    'failed': 'text-red-400 bg-red-500/10 border-red-500/30',
-    'pending': 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30'
+    'success': 'text-[var(--success-text)] bg-[var(--success-bg)] border-[var(--success-border)]',
+    'failed': 'text-[var(--error-text)] bg-[var(--error-bg)] border-[var(--error-border)]',
+    'pending': 'text-[var(--warning-text)] bg-[var(--warning-bg)] border-[var(--warning-border)]'
   };
-  return colorMap[status] || 'text-zinc-400 bg-zinc-500/10 border-zinc-500/30';
+  return colorMap[status] || 'text-[var(--text-tertiary)] bg-[var(--border-secondary)]/10 border-[var(--border-secondary)]/30';
 };
 
 /**

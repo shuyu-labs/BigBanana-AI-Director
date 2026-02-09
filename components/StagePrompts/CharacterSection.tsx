@@ -40,8 +40,8 @@ const CharacterSection: React.FC<Props> = ({
         <div key={char.id} className={STYLES.card.base}>
           <div className="flex items-start justify-between mb-3">
             <div>
-              <h3 className="text-lg font-bold text-white mb-1">{char.name}</h3>
-              <p className="text-sm text-zinc-500">
+              <h3 className="text-lg font-bold text-[var(--text-primary)] mb-1">{char.name}</h3>
+              <p className="text-sm text-[var(--text-tertiary)]">
                 {char.gender} · {char.age} · {char.personality}
               </p>
             </div>
@@ -69,12 +69,12 @@ const CharacterSection: React.FC<Props> = ({
 
           {/* Character Variations */}
           {char.variations && char.variations.length > 0 && (
-            <div className="mt-4 pl-4 border-l-2 border-zinc-800 space-y-3">
-              <h4 className="text-xs text-zinc-500 uppercase tracking-wider font-bold">角色变体</h4>
+            <div className="mt-4 pl-4 border-l-2 border-[var(--border-primary)] space-y-3">
+              <h4 className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-bold">角色变体</h4>
               {char.variations.map(variation => (
                 <div key={variation.id} className={STYLES.card.nested}>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-zinc-300">{variation.name}</span>
+                    <span className="text-sm font-medium text-[var(--text-secondary)]">{variation.name}</span>
                     <button
                       onClick={() => onStartEdit('character-variation', char.id, variation.visualPrompt, variation.id)}
                       className={STYLES.button.editSmall}

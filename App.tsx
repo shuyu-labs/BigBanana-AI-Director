@@ -11,11 +11,13 @@ import ModelConfigModal from './components/ModelConfig';
 import { ProjectState } from './types';
 import { Save, CheckCircle, X } from 'lucide-react';
 import { saveProjectToDB } from './services/storageService';
-import { setGlobalApiKey } from './services/geminiService';
+import { setGlobalApiKey } from './services/aiService';
 import { setLogCallback, clearLogCallback } from './services/renderLogService';
+import { useAlert } from './components/GlobalAlert';
 import logoImg from './logo.png';
 
 function App() {
+  const { showAlert } = useAlert();
   const [project, setProject] = useState<ProjectState | null>(null);
   const [apiKey, setApiKey] = useState<string>('');
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'unsaved'>('saved');
@@ -24,6 +26,7 @@ function App() {
   const [isMobile, setIsMobile] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showModelConfig, setShowModelConfig] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   
   // Ref to hold debounce timer
   const saveTimeoutRef = useRef<any>(null);
@@ -198,6 +201,20 @@ function App() {
   };
 
   const setStage = (stage: 'script' | 'assets' | 'director' | 'export' | 'prompts') => {
+    if (isGenerating) {
+      showAlert('当前正在执行生成任务（剧本分镜 / 首帧 / 视频等），切换页面会导致生成数据丢失，且已扣除的费用无法恢复。\n\n确定要离开当前页面吗？', {
+        title: '生成任务进行中',
+        type: 'warning',
+        showCancel: true,
+        confirmText: '确定离开',
+        cancelText: '继续等待',
+        onConfirm: () => {
+          setIsGenerating(false);
+          updateProject({ stage });
+        }
+      });
+      return;
+    }
     updateProject({ stage });
   };
 
@@ -206,6 +223,23 @@ function App() {
   };
 
   const handleExitProject = async () => {
+    if (isGenerating) {
+      showAlert('当前正在执行生成任务（剧本分镜 / 首帧 / 视频等），退出项目会导致生成数据丢失，且已扣除的费用无法恢复。\n\n确定要退出吗？', {
+        title: '生成任务进行中',
+        type: 'warning',
+        showCancel: true,
+        confirmText: '确定退出',
+        cancelText: '继续等待',
+        onConfirm: async () => {
+          setIsGenerating(false);
+          if (project) {
+            await saveProjectToDB(project);
+          }
+          setProject(null);
+        }
+      });
+      return;
+    }
     // Force save before exiting
     if (project) {
         await saveProjectToDB(project);
@@ -217,37 +251,44 @@ function App() {
     if (!project) return null;
     switch (project.stage) {
       case 'script':
-        return <StageScript project={project} updateProject={updateProject} />;
+        return (
+          <StageScript
+            project={project}
+            updateProject={updateProject}
+            onShowModelConfig={handleShowModelConfig}
+            onGeneratingChange={setIsGenerating}
+          />
+        );
       case 'assets':
-        return <StageAssets project={project} updateProject={updateProject} />;
+        return <StageAssets project={project} updateProject={updateProject} onGeneratingChange={setIsGenerating} />;
       case 'director':
-        return <StageDirector project={project} updateProject={updateProject} />;
+        return <StageDirector project={project} updateProject={updateProject} onGeneratingChange={setIsGenerating} />;
       case 'export':
         return <StageExport project={project} />;
       case 'prompts':
         return <StagePrompts project={project} updateProject={updateProject} />;
       default:
-        return <div className="text-white">未知阶段</div>;
+        return <div className="text-[var(--text-primary)]">未知阶段</div>;
     }
   };
 
   // Mobile Warning Screen
   if (isMobile) {
     return (
-      <div className="h-screen bg-[#050505] flex items-center justify-center p-6">
+      <div className="h-screen bg-[var(--bg-base)] flex items-center justify-center p-6">
         <div className="max-w-md text-center space-y-6">
           <img src={logoImg} alt="Logo" className="w-20 h-20 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-white mb-2">BigBanana AI Director</h1>
-          <div className="bg-[#0A0A0A] border border-zinc-800 rounded-xl p-8">
-            <p className="text-zinc-400 text-base leading-relaxed mb-4">
+          <h1 className="text-2xl font-bold text-[var(--text-primary)] mb-2">BigBanana AI Director</h1>
+          <div className="bg-[var(--bg-primary)] border border-[var(--border-primary)] rounded-xl p-8">
+            <p className="text-[var(--text-tertiary)] text-base leading-relaxed mb-4">
               为了获得最佳体验，请使用 PC 端浏览器访问。
             </p>
-            <p className="text-zinc-600 text-sm">
+            <p className="text-[var(--text-muted)] text-sm">
               本应用需要较大的屏幕空间和桌面级浏览器环境才能正常运行。
             </p>
           </div>
-          <div className="text-xs text-zinc-700">
-            <a href="https://bigbanana.tree456.com/" target="_blank" rel="noreferrer" className="hover:text-indigo-400 transition-colors">
+          <div className="text-xs text-[var(--text-muted)]">
+            <a href="https://director.tree456.com/" target="_blank" rel="noreferrer" className="hover:text-[var(--accent-text)] transition-colors">
               访问产品首页了解更多
             </a>
           </div>
@@ -283,7 +324,7 @@ function App() {
 
   // Workspace View
   return (
-    <div className="flex h-screen bg-[#121212] font-sans text-gray-100 selection:bg-indigo-500/30">
+    <div className="flex h-screen bg-[var(--bg-secondary)] font-sans text-[var(--text-secondary)] selection:bg-[var(--accent-bg)]">
       <Sidebar 
         currentStage={project.stage} 
         setStage={setStage} 
@@ -291,6 +332,7 @@ function App() {
         projectName={project.title}
         onShowOnboarding={handleShowOnboarding}
         onShowModelConfig={() => setShowModelConfig(true)}
+        isNavigationLocked={isGenerating}
       />
       
       <main className="ml-72 flex-1 h-screen overflow-hidden relative">
@@ -298,7 +340,7 @@ function App() {
         
         {/* Save Status Indicator */}
         {showSaveStatus && (
-          <div className="absolute top-4 right-6 pointer-events-none flex items-center gap-2 text-xs font-mono text-zinc-400 bg-black/50 px-2 py-1 rounded-full backdrop-blur-sm z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="absolute top-4 right-6 pointer-events-none flex items-center gap-2 text-xs font-mono text-[var(--text-tertiary)] bg-[var(--overlay-medium)] px-2 py-1 rounded-full backdrop-blur-sm z-50 animate-in fade-in slide-in-from-top-2 duration-200">
              {saveStatus === 'saving' ? (
                <>
                  <Save className="w-3 h-3 animate-pulse" />
@@ -306,7 +348,7 @@ function App() {
                </>
              ) : (
                <>
-                 <CheckCircle className="w-3 h-3 text-green-500" />
+                 <CheckCircle className="w-3 h-3 text-[var(--success)]" />
                  已保存
                </>
              )}

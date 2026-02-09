@@ -25,6 +25,7 @@ Moving away from the traditional "slot machine" style of random generation, BigB
 
 ### Phase 03: Director Workbench
 ![Director Workbench](./images/导演工作台.png)
+![Nine-Grid Storyboard](./images/镜头九宫格.png)
 ![Shots & Frames](./images/镜头与帧.png)
 ![Shots & Frames Detail](./images/镜头与帧1.png)
 

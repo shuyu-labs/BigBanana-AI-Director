@@ -1,67 +1,99 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
   <head>
+    <script>
+      (function(){
+        var t = localStorage.getItem('bigbanana_theme');
+        document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+      })();
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     
     <!-- Primary Meta Tags -->
-    <title>BigBanana AI Director - 工业级 AI 漫剧与视频生成工作台</title>
-    <meta name="title" content="BigBanana AI Director - 工业级 AI 漫剧与视频生成工作台" />
-    <meta name="description" content="专为 AI 漫剧、动态漫画及影视分镜设计的专业生产力工具。采用关键帧驱动工作流，支持角色一致性保证、工业化生产流程，基于 GPT-5.1、Gemini-3-Pro 和 Veo 3.1 模型。" />
-    <meta name="keywords" content="AI漫剧,AI视频生成,动态漫画,影视分镜,Motion Comics,Animatic,关键帧生成,角色一致性,Veo,GPT,Gemini,AI导演,视频制作工具" />
+    <title>BigBanana AI Director - AI 漫剧生成平台 | 一键从剧本到成片的智能短剧制作工具</title>
+    <meta name="title" content="BigBanana AI Director - AI 漫剧生成平台 | 一键从剧本到成片的智能短剧制作工具" />
+    <meta name="description" content="BigBanana AI Director 是工业级 AI 漫剧与短视频生成工作台。采用关键帧驱动工作流，支持 AI 剧本拆解、角色一致性定妆、智能分镜生成、Veo/Sora 视频合成，一句话生成完整短剧。免费使用，无需后端，数据本地存储。" />
+    <meta name="keywords" content="AI漫剧,AI短剧生成,AI视频制作,动态漫画制作,AI分镜,AI导演工具,关键帧生成,角色一致性,Motion Comics,Animatic,Veo视频生成,Sora视频,AI剧本创作,漫剧工场,短视频制作,AI绘画,Gemini绘图,GPT剧本,免费AI工具,视频自动化" />
     <meta name="author" content="BigBanana Team" />
-    <meta name="robots" content="index, follow" />
-    <meta name="language" content="Chinese" />
-    <meta name="revisit-after" content="7 days" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="language" content="zh-CN" />
+    <meta name="revisit-after" content="3 days" />
+    <meta name="rating" content="general" />
+    <meta name="distribution" content="global" />
+    <meta name="generator" content="BigBanana AI Director" />
+    
+    <!-- Alternate Languages -->
+    <link rel="alternate" hreflang="zh-CN" href="https://director.tree456.com/" />
+    <link rel="alternate" hreflang="en" href="https://director.tree456.com/" />
+    <link rel="alternate" hreflang="ja" href="https://director.tree456.com/" />
+    <link rel="alternate" hreflang="x-default" href="https://director.tree456.com/" />
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://bigbanana.tree456.com/" />
-    <meta property="og:title" content="BigBanana AI Director - 工业级 AI 漫剧与视频生成工作台" />
-    <meta property="og:description" content="专为 AI 漫剧、动态漫画及影视分镜设计的专业生产力工具。采用关键帧驱动工作流，支持角色一致性保证、工业化生产流程。" />
-    <meta property="og:image" content="https://bigbanana.tree456.com/UI.png" />
+    <meta property="og:url" content="https://director.tree456.com/" />
+    <meta property="og:title" content="BigBanana AI Director - AI 漫剧生成平台 | 从剧本到成片全自动化" />
+    <meta property="og:description" content="工业级 AI 漫剧与短视频生成工作台。采用关键帧驱动工作流，AI 智能剧本拆解、角色一致性保证、Veo/Sora 视频合成，一句话生成完整短剧。免费使用，数据本地存储。" />
+    <meta property="og:image" content="https://director.tree456.com/UI.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="BigBanana AI Director 工作台界面截图 - AI 漫剧生成平台" />
     <meta property="og:locale" content="zh_CN" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:locale:alternate" content="ja_JP" />
     <meta property="og:site_name" content="BigBanana AI Director" />
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://bigbanana.tree456.com/" />
-    <meta name="twitter:title" content="BigBanana AI Director - 工业级 AI 漫剧与视频生成工作台" />
-    <meta name="twitter:description" content="专为 AI 漫剧、动态漫画及影视分镜设计的专业生产力工具。采用关键帧驱动工作流，支持角色一致性保证、工业化生产流程。" />
-    <meta name="twitter:image" content="https://bigbanana.tree456.com/UI.png" />
+    <meta name="twitter:url" content="https://director.tree456.com/" />
+    <meta name="twitter:title" content="BigBanana AI Director - AI 漫剧生成平台 | 从剧本到成片全自动化" />
+    <meta name="twitter:description" content="工业级 AI 漫剧与短视频生成工作台。关键帧驱动工作流 + 角色一致性保证 + Veo/Sora 视频合成，一句话生成完整短剧。" />
+    <meta name="twitter:image" content="https://director.tree456.com/UI.png" />
+    <meta name="twitter:image:alt" content="BigBanana AI Director 工作台界面截图" />
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://bigbanana.tree456.com/" />
+    <link rel="canonical" href="https://director.tree456.com/" />
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/logo.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/logo.png" />
     
     <!-- Theme Color -->
-    <meta name="theme-color" content="#050505" />
+    <meta name="theme-color" content="#050505" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="msapplication-TileColor" content="#050505" />
+    <meta name="msapplication-TileImage" content="/logo.png" />
+    <meta name="apple-mobile-web-app-title" content="AI漫剧工场" />
+    <meta name="application-name" content="BigBanana AI Director" />
     
-    <!-- Structured Data (JSON-LD) -->
+    <!-- Structured Data: SoftwareApplication (JSON-LD) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
       "name": "BigBanana AI Director",
+      "alternateName": ["AI漫剧工场", "大香蕉AI导演", "BigBanana AI 漫剧生成平台"],
       "applicationCategory": "MultimediaApplication",
-      "operatingSystem": "Web Browser",
-      "description": "工业级 AI 漫剧与视频生成工作台，专为 AI 漫剧、动态漫画及影视分镜设计的专业生产力工具",
+      "applicationSubCategory": "Video Production",
+      "operatingSystem": "Web Browser (Chrome, Firefox, Edge, Safari)",
+      "description": "BigBanana AI Director 是工业级 AI 漫剧与短视频生成工作台，采用 Script-to-Asset-to-Keyframe 工业化工作流，支持 AI 剧本拆解、角色一致性定妆、智能分镜生成和视频合成。",
+      "url": "https://director.tree456.com",
+      "downloadUrl": "https://github.com/shuyu-labs/BigBanana-AI-Director",
+      "installUrl": "https://director.tree456.com",
       "offers": {
         "@type": "Offer",
         "price": "0",
-        "priceCurrency": "CNY"
+        "priceCurrency": "CNY",
+        "availability": "https://schema.org/InStock"
       },
       "aggregateRating": {
         "@type": "AggregateRating",
         "ratingValue": "4.8",
-        "ratingCount": "156"
+        "ratingCount": "156",
+        "bestRating": "5",
+        "worstRating": "1"
       },
       "creator": {
         "@type": "Organization",
@@ -69,24 +101,202 @@
         "url": "https://tree456.com"
       },
       "featureList": [
-        "关键帧驱动生成",
-        "角色一致性保证",
+        "AI 智能剧本拆解与分镜生成",
+        "角色一致性定妆与衣橱系统",
+        "关键帧驱动视频生成",
+        "Veo 3.1 / Sora 2 视频合成",
+        "GPT-5.1 高智能剧本分析",
+        "Gemini 3 Pro 高速绘图",
         "工业化生产流程",
-        "本地数据存储"
+        "本地 IndexedDB 数据存储",
+        "时间轴实时预览",
+        "高清关键帧与 MP4 导出"
       ],
-      "screenshot": "https://bigbanana.tree456.com/UI.png",
+      "screenshot": "https://director.tree456.com/UI.png",
       "softwareVersion": "1.0.0",
-      "url": "https://bigbanana.tree456.com"
+      "releaseNotes": "支持 GPT-5.1 剧本分析、Gemini 3 Pro 绘图、Veo 3.1 视频生成",
+      "inLanguage": ["zh-CN", "en", "ja"],
+      "isAccessibleForFree": true
+    }
+    </script>
+    
+    <!-- Structured Data: WebApplication (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "BigBanana AI Director",
+      "url": "https://director.tree456.com",
+      "description": "AI 一站式短剧/漫剧生成平台，从灵感到成片的高效生产工具",
+      "applicationCategory": "MultimediaApplication",
+      "browserRequirements": "requires JavaScript, modern browser (Chrome 90+, Firefox 90+, Edge 90+, Safari 15+)",
+      "permissions": "IndexedDB storage",
+      "operatingSystem": "Any (Web-based)",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "CNY"
+      }
+    }
+    </script>
+    
+    <!-- Structured Data: Organization (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "BigBanana Team",
+      "url": "https://tree456.com",
+      "logo": "https://director.tree456.com/logo.png",
+      "sameAs": [
+        "https://github.com/shuyu-labs/BigBanana-AI-Director"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "antskpro@qq.com",
+        "contactType": "customer support"
+      }
+    }
+    </script>
+    
+    <!-- Structured Data: FAQPage (JSON-LD) - 提升搜索结果丰富度 -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "BigBanana AI Director 是什么？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "BigBanana AI Director 是一个工业级 AI 漫剧与短视频生成工作台，采用 Script-to-Asset-to-Keyframe 工作流，支持从剧本创作到成片导出的全流程自动化。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "BigBanana AI Director 需要付费吗？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "BigBanana AI Director 工具本身完全免费，数据存储在本地浏览器中，无需注册。但使用 AI 模型生成内容需要配置 AntSK API Key，API 调用按量计费。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "支持哪些 AI 模型？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "支持 GPT-5.1（智能剧本分析）、Gemini 3 Pro（高速绘图）、Veo 3.1 和 Sora 2（视频生成与关键帧插值）等多种先进 AI 模型。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "数据安全吗？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "所有项目数据均存储在浏览器本地的 IndexedDB 中，不上传任何服务器，完全保障数据隐私安全。"
+          }
+        }
+      ]
+    }
+    </script>
+    
+    <!-- Structured Data: BreadcrumbList (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "首页",
+          "item": "https://director.tree456.com/"
+        }
+      ]
     }
     </script>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+      /* 完整变量回退（暗色），避免主题 CSS 加载前无变量 */
+      :root {
+        --bg-base: #050505;
+        --bg-primary: #0A0A0A;
+        --bg-secondary: #121212;
+        --bg-surface: #141414;
+        --bg-elevated: #1A1A1A;
+        --bg-deep: #0F0F0F;
+        --bg-sunken: #080808;
+        --bg-hover: #27272a;
+        --border-primary: #27272a;
+        --border-secondary: #3f3f46;
+        --border-subtle: #18181b;
+        --text-primary: #ffffff;
+        --text-secondary: #d4d4d8;
+        --text-tertiary: #a1a1aa;
+        --text-muted: #71717a;
+        --scrollbar-track: #0a0a0a;
+        --scrollbar-thumb: #333;
+        --scrollbar-thumb-hover: #555;
+        --glass-bg: rgba(20, 20, 20, 0.6);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --nav-active-bg: rgba(39, 39, 42, 0.5);
+        --nav-hover-bg: rgba(39, 39, 42, 0.3);
+        --btn-primary-bg: #ffffff;
+        --btn-primary-text: #000000;
+        --btn-primary-hover: #e4e4e7;
+        --btn-primary-shadow: rgba(255, 255, 255, 0.05);
+        --btn-selected-bg: #f4f4f5;
+        --btn-selected-border: #f4f4f5;
+        --overlay-heavy: rgba(0, 0, 0, 0.8);
+        --overlay-medium: rgba(0, 0, 0, 0.6);
+        --overlay-light: rgba(0, 0, 0, 0.3);
+        --overlay-full: rgba(0, 0, 0, 0.95);
+        --overlay-border: rgba(255, 255, 255, 0.1);
+        --selection-bg: rgba(255, 255, 255, 0.2);
+        --accent: #818cf8;
+        --accent-hover: #6366f1;
+        --accent-muted: #6366f1;
+        --accent-bg: rgba(99, 102, 241, 0.15);
+        --accent-bg-hover: rgba(99, 102, 241, 0.25);
+        --accent-border: rgba(99, 102, 241, 0.3);
+        --accent-text: #a5b4fc;
+        --accent-text-hover: #c7d2fe;
+        --accent-on: #ffffff;
+        --accent-shadow: rgba(99, 102, 241, 0.2);
+        --toggle-active: #818cf8;
+        --toggle-inactive: var(--border-secondary);
+        --toggle-knob: #ffffff;
+        --success: #34d399;
+        --success-text: #6ee7b7;
+        --success-bg: rgba(52, 211, 153, 0.1);
+        --success-border: rgba(52, 211, 153, 0.3);
+        --error: #f87171;
+        --error-text: #fca5a5;
+        --error-bg: rgba(248, 113, 113, 0.1);
+        --error-border: rgba(248, 113, 113, 0.3);
+        --error-hover-bg: rgba(127, 29, 29, 0.2);
+        --error-hover-bg-strong: rgba(127, 29, 29, 0.4);
+        --warning: #fbbf24;
+        --warning-text: #fcd34d;
+        --warning-bg: rgba(251, 191, 36, 0.1);
+        --warning-border: rgba(251, 191, 36, 0.3);
+        --info: #60a5fa;
+        --info-text: #93c5fd;
+        --info-bg: rgba(96, 165, 250, 0.1);
+        --info-border: rgba(96, 165, 250, 0.3);
+        --tag-purple: #c084fc;
+        --tag-purple-bg: rgba(192, 132, 252, 0.1);
+        --tag-purple-border: rgba(192, 132, 252, 0.3);
+        --tag-purple-hover: rgba(192, 132, 252, 0.1);
+      }
       body {
         font-family: 'Inter', sans-serif;
-        background-color: #050505;
-        color: #e5e5e5;
+        background-color: var(--bg-base);
+        color: var(--text-secondary);
+        transition: background-color 0.2s ease, color 0.2s ease;
       }
       /* Sony Style Scrollbar - Thin, Rectangular */
       ::-webkit-scrollbar {
@@ -94,27 +304,35 @@
         height: 6px;
       }
       ::-webkit-scrollbar-track {
-        background: #0a0a0a; 
+        background: var(--scrollbar-track);
       }
       ::-webkit-scrollbar-thumb {
-        background: #333; 
+        background: var(--scrollbar-thumb);
         border-radius: 0px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #555; 
+        background: var(--scrollbar-thumb-hover);
       }
       
       .font-mono {
         font-family: 'JetBrains Mono', monospace;
       }
       
+      /* 全局 select/option 样式 - 确保亮色主题下下拉框可读 */
+      select option {
+        background-color: var(--bg-surface);
+        color: var(--text-primary);
+      }
       /* Utilities */
       .glass-panel {
-        background: rgba(20, 20, 20, 0.6);
+        background: var(--glass-bg);
         backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        border: 1px solid var(--glass-border);
       }
     </style>
+    <!-- 主题 CSS 放在 <style> 之后，确保 [data-theme] 的变量优先级高于 :root 回退 -->
+    <link rel="stylesheet" href="/styles/theme-dark.css" />
+    <link rel="stylesheet" href="/styles/theme-light.css" />
   <script type="importmap">
 {
   "imports": {

@@ -12,11 +12,11 @@ const ImagePreviewModal: React.FC<ImagePreviewModalProps> = ({ imageUrl, title, 
 
   return (
     <div 
-      className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 bg-[var(--overlay-full)] backdrop-blur-md flex items-center justify-center animate-in fade-in duration-200"
       onClick={onClose}
     >
       <button 
-        className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors z-10"
+        className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-white/20 rounded-full text-[var(--text-primary)] transition-colors z-10"
         onClick={onClose}
       >
         <X className="w-6 h-6" />
@@ -24,8 +24,8 @@ const ImagePreviewModal: React.FC<ImagePreviewModalProps> = ({ imageUrl, title, 
       
       {title && (
         <div className="absolute top-6 left-6 z-10">
-          <div className="bg-black/60 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-            <h3 className="text-white font-bold text-sm">{title}</h3>
+            <div className="bg-[var(--overlay-medium)] backdrop-blur-sm px-4 py-2 rounded-lg border border-[var(--overlay-border)]">
+            <h3 className="text-[var(--text-primary)] font-bold text-sm">{title}</h3>
           </div>
         </div>
       )}
@@ -40,8 +40,8 @@ const ImagePreviewModal: React.FC<ImagePreviewModalProps> = ({ imageUrl, title, 
       </div>
       
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
-        <div className="bg-black/60 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">
-          <p className="text-white/60 text-xs">点击任意位置关闭</p>
+        <div className="bg-[var(--overlay-medium)] backdrop-blur-sm px-4 py-2 rounded-full border border-[var(--overlay-border)]">
+          <p className="text-[var(--text-primary)]/60 text-xs">点击任意位置关闭</p>
         </div>
       </div>
     </div>

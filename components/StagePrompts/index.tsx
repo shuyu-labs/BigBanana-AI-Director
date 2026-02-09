@@ -6,10 +6,12 @@ import {
   savePromptEdit, 
   filterCharacters, 
   filterScenes, 
+  filterProps,
   filterShots 
 } from './utils';
 import CharacterSection from './CharacterSection';
 import SceneSection from './SceneSection';
+import PropSection from './PropSection';
 import KeyframeSection from './KeyframeSection';
 
 interface Props {
@@ -22,7 +24,7 @@ const StagePrompts: React.FC<Props> = ({ project, updateProject }) => {
   const [category, setCategory] = useState<PromptCategory>('all');
   const [editingPrompt, setEditingPrompt] = useState<EditingPrompt>(null);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(['characters', 'scenes', 'shots'])
+    new Set(['characters', 'scenes', 'props', 'shots'])
   );
 
   const toggleSection = (section: string) => {
@@ -36,7 +38,7 @@ const StagePrompts: React.FC<Props> = ({ project, updateProject }) => {
   };
 
   const handleStartEdit = (
-    type: 'character' | 'character-variation' | 'scene' | 'keyframe' | 'video',
+    type: 'character' | 'character-variation' | 'scene' | 'prop' | 'keyframe' | 'video',
     id: string,
     currentValue: string,
     variationId?: string,
@@ -71,6 +73,10 @@ const StagePrompts: React.FC<Props> = ({ project, updateProject }) => {
     ? filterScenes(project.scriptData?.scenes || [], searchQuery)
     : [];
 
+  const filteredProps = category === 'all' || category === 'props'
+    ? filterProps(project.scriptData?.props || [], searchQuery)
+    : [];
+
   const filteredShots = category === 'all' || category === 'keyframes'
     ? filterShots(project.shots || [], searchQuery)
     : [];
@@ -78,37 +84,38 @@ const StagePrompts: React.FC<Props> = ({ project, updateProject }) => {
   const hasNoData = !project.scriptData && !project.shots.length;
 
   return (
-    <div className="h-screen bg-gradient-to-br from-[#0A0A0A] via-[#121212] to-[#0A0A0A] flex flex-col">
+    <div className="h-screen bg-gradient-to-br from-[var(--bg-primary)] via-[var(--bg-secondary)] to-[var(--bg-primary)] flex flex-col">
       {/* Header */}
-      <div className="border-b border-zinc-800 bg-[#050505]/50 backdrop-blur-sm sticky top-0 z-10">
+      <div className="border-b border-[var(--border-primary)] bg-[var(--bg-base)]/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-bold text-white mb-1">提示词管理</h1>
-              <p className="text-sm text-zinc-500">查看和编辑所有生成任务的提示词和变量</p>
+              <h1 className="text-2xl font-bold text-[var(--text-primary)] mb-1">提示词管理</h1>
+              <p className="text-sm text-[var(--text-tertiary)]">查看和编辑所有生成任务的提示词和变量</p>
             </div>
           </div>
 
           {/* Search and Filter */}
           <div className="flex gap-3">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="搜索提示词、角色、场景..."
-                className="w-full bg-zinc-900 border border-zinc-800 text-white pl-10 pr-4 py-2 rounded-lg text-sm focus:border-indigo-500 focus:outline-none"
+                className="w-full bg-[var(--bg-elevated)] border border-[var(--border-primary)] text-[var(--text-primary)] pl-10 pr-4 py-2 rounded-lg text-sm focus:border-[var(--accent)] focus:outline-none"
               />
             </div>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value as PromptCategory)}
-              className="bg-zinc-900 border border-zinc-800 text-white px-4 py-2 rounded-lg text-sm focus:border-indigo-500 focus:outline-none"
+              className="bg-[var(--bg-elevated)] border border-[var(--border-primary)] text-[var(--text-primary)] px-4 py-2 rounded-lg text-sm focus:border-[var(--accent)] focus:outline-none"
             >
               <option value="all">全部</option>
               <option value="characters">角色</option>
               <option value="scenes">场景</option>
+              <option value="props">道具</option>
               <option value="keyframes">关键帧</option>
             </select>
           </div>
@@ -141,6 +148,17 @@ const StagePrompts: React.FC<Props> = ({ project, updateProject }) => {
                 onCancelEdit={handleCancelEdit}
                 onPromptChange={handlePromptChange}
               />
+
+              <PropSection
+                props={filteredProps}
+                isExpanded={expandedSections.has('props')}
+                onToggle={() => toggleSection('props')}
+                editingPrompt={editingPrompt}
+                onStartEdit={handleStartEdit}
+                onSaveEdit={handleSaveEdit}
+                onCancelEdit={handleCancelEdit}
+                onPromptChange={handlePromptChange}
+              />
             </>
           )}
 
@@ -161,7 +179,7 @@ const StagePrompts: React.FC<Props> = ({ project, updateProject }) => {
           {/* Empty State */}
           {hasNoData && (
             <div className="text-center py-16">
-              <div className="text-zinc-600 mb-4">
+              <div className="text-[var(--text-muted)] mb-4">
                 <Film className="w-16 h-16 mx-auto mb-4 opacity-50" />
                 <p className="text-lg">暂无提示词数据</p>
                 <p className="text-sm mt-2">请先在剧本阶段生成角色和场景，或在导演工作台生成分镜</p>

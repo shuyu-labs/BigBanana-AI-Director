@@ -68,7 +68,7 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
-          className="appearance-none bg-zinc-800 border border-zinc-700 text-white text-xs rounded px-3 py-1.5 pr-7 focus:border-indigo-500 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="appearance-none bg-[var(--bg-hover)] border border-[var(--border-secondary)] text-[var(--text-primary)] text-xs rounded px-3 py-1.5 pr-7 focus:border-[var(--accent)] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           {models.map((model) => (
             <option key={model.id} value={model.id}>
@@ -76,7 +76,7 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({
             </option>
           ))}
         </select>
-        <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-500 pointer-events-none" />
+        <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-[var(--text-tertiary)] pointer-events-none" />
       </div>
     );
   }
@@ -84,7 +84,7 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({
   return (
     <div className="space-y-1">
       {label && (
-        <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-1">
+        <label className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest flex items-center gap-1">
           <Cpu className="w-3 h-3" />
           {label}
         </label>
@@ -94,7 +94,7 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
-          className="w-full appearance-none bg-[#141414] border border-zinc-800 text-white text-xs rounded-lg px-3 py-2.5 pr-8 focus:border-indigo-500 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="w-full appearance-none bg-[var(--bg-surface)] border border-[var(--border-primary)] text-[var(--text-primary)] text-xs rounded-lg px-3 py-2.5 pr-8 focus:border-[var(--accent)] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           {models.map((model) => (
             <option key={model.id} value={model.id}>
@@ -102,10 +102,10 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({
             </option>
           ))}
         </select>
-        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)] pointer-events-none" />
       </div>
       {selectedModel && !compact && (
-        <p className="text-[9px] text-zinc-600">
+        <p className="text-[9px] text-[var(--text-muted)]">
           ID: {selectedModel.id}
         </p>
       )}
@@ -128,7 +128,7 @@ export const VideoModelSelector: React.FC<{
   
   return (
     <div className="space-y-1">
-      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+      <label className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest">
         视频模型
       </label>
       <div className="relative">
@@ -136,7 +136,7 @@ export const VideoModelSelector: React.FC<{
           value={value}
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
-          className="w-full appearance-none bg-[#141414] border border-zinc-800 text-white text-xs rounded-lg px-3 py-2.5 pr-8 focus:border-indigo-500 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="w-full appearance-none bg-[var(--bg-surface)] border border-[var(--border-primary)] text-[var(--text-primary)] text-xs rounded-lg px-3 py-2.5 pr-8 focus:border-[var(--accent)] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           {models.map((model) => {
             const videoModel = model as VideoModelDefinition;
@@ -148,10 +148,10 @@ export const VideoModelSelector: React.FC<{
             );
           })}
         </select>
-        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)] pointer-events-none" />
       </div>
       {selectedModel && (
-        <p className="text-[9px] text-zinc-600">
+        <p className="text-[9px] text-[var(--text-muted)]">
           模式: {selectedModel.params.mode === 'async' ? '异步（需要轮询）' : '同步（直接返回）'}
           {selectedModel.params.supportedDurations.length > 1 && 
             ` · 支持时长: ${selectedModel.params.supportedDurations.join('/')}秒`

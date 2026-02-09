@@ -220,18 +220,25 @@ const StageExport: React.FC<Props> = ({ project }) => {
       const assetCount = payload?.stores?.assetLibrary?.length || 0;
       const confirmMessage = `将导入 ${projectCount} 个项目和 ${assetCount} 个资产。若 ID 冲突将覆盖现有数据。是否继续？`;
 
-      if (!window.confirm(confirmMessage)) {
-        return;
-      }
-
-      setIsDataImporting(true);
-      const result = await importIndexedDBData(payload, { mode: 'merge' });
-      showAlert(`导入完成：项目 ${result.projects} 个，资产 ${result.assets} 个。`, { type: 'success' });
+      showAlert(confirmMessage, {
+        type: 'warning',
+        showCancel: true,
+        onConfirm: async () => {
+          try {
+            setIsDataImporting(true);
+            const result = await importIndexedDBData(payload, { mode: 'merge' });
+            showAlert(`导入完成：项目 ${result.projects} 个，资产 ${result.assets} 个。`, { type: 'success' });
+          } catch (error) {
+            console.error('Import failed:', error);
+            showAlert(`导入失败: ${error instanceof Error ? error.message : '未知错误'}`, { type: 'error' });
+          } finally {
+            setIsDataImporting(false);
+          }
+        }
+      });
     } catch (error) {
       console.error('Import failed:', error);
       showAlert(`导入失败: ${error instanceof Error ? error.message : '未知错误'}`, { type: 'error' });
-    } finally {
-      setIsDataImporting(false);
     }
   };
 
@@ -241,7 +248,7 @@ const StageExport: React.FC<Props> = ({ project }) => {
       <div className={STYLES.header.container}>
         <div className="flex items-center gap-4">
           <h2 className={STYLES.header.title}>
-            <Film className="w-5 h-5 text-indigo-500" />
+            <Film className="w-5 h-5 text-[var(--accent)]" />
             成片与导出
             <span className={STYLES.header.subtitle}>Rendering & Export</span>
           </h2>
