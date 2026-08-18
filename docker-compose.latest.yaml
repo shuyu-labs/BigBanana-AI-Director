@@ -1,0 +1,46 @@
+services:
+  web:
+    image: registry.cn-hangzhou.aliyuncs.com/tree456/bigbanana-ai-director:web-3.4.0
+    container_name: bigbanana-latest-web
+    ports:
+      - "3006:80"
+    depends_on:
+      - media-proxy
+      - new-api-proxy
+      - cutos-api
+    restart: unless-stopped
+
+  media-proxy:
+    image: registry.cn-hangzhou.aliyuncs.com/tree456/bigbanana-ai-director:media-3.4.0
+    container_name: bigbanana-latest-media-proxy
+    environment:
+      MEDIA_PROXY_PORT: "8787"
+      MEDIA_PROXY_ALLOWED_HOSTS: "volces.com"
+      MEDIA_PROXY_ALLOWED_PROTOCOLS: "https"
+      MEDIA_PROXY_TIMEOUT_MS: "120000"
+      MEDIA_PROXY_MAX_URL_LENGTH: "4096"
+      MEDIA_PROXY_CORS_ORIGIN: "*"
+    expose:
+      - "8787"
+    restart: unless-stopped
+
+  new-api-proxy:
+    image: registry.cn-hangzhou.aliyuncs.com/tree456/bigbanana-ai-director:newapi-3.4.0
+    container_name: bigbanana-latest-new-api-proxy
+    environment:
+      NEW_API_PROXY_PORT: "8788"
+      NEW_API_ALLOWED_HOSTS: ""
+      NEW_API_ALLOW_PRIVATE_HOSTS: "false"
+    expose:
+      - "8788"
+    restart: unless-stopped
+
+  cutos-api:
+    image: registry.cn-hangzhou.aliyuncs.com/tree456/bigbanana-ai-director:cutos-3.4.0
+    container_name: bigbanana-latest-cutos-api
+    environment:
+      CUTOS_API_PORT: "8789"
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:-}
+    expose:
+      - "8789"
+    restart: unless-stopped
